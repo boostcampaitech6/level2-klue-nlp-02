@@ -139,9 +139,7 @@ test.ipynb
 *.csv
 
 #result
-.results/
 results/
 
 #output
-.best_model/
 best_model/
