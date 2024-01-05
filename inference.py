@@ -41,7 +41,7 @@ def inference(model, tokenized_sent, device):
     return np.concatenate(output_pred).tolist(), np.concatenate(output_prob, axis=0).tolist()
 
 
-def main(args):
+def predict(args):
     set_seed(42)
     """
     주어진 dataset csv 파일과 같은 형태일 경우 inference 가능한 코드입니다.
@@ -77,6 +77,10 @@ def main(args):
     output.to_csv("./prediction/submission.csv", index=False)  # 최종적으로 완성된 예측한 라벨 csv 파일 형태로 저장.
     # 필수!!
     print("---- Finish! ----")
+
+
+def main(args):
+    predict(args)
 
 
 if __name__ == "__main__":
