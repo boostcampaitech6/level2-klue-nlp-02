@@ -1,0 +1,27 @@
+seed: 42
+
+data:
+    output_path: ./best_model/
+    train_path: ./data/train_dist_1.csv
+    dev_path: ./data/dev_dist_1.csv
+    predict_path: ./data/test.csv
+    submission_path: ./prediction/
+
+model:
+    model_name: klue/bert-base
+    save_total_limit: 5
+    save_steps: 500
+
+train:
+    learning_rate: 5e-5
+    batch_size: 16
+    max_epoch: 20
+    warmup_steps: 500
+    weight_decay: 0.01
+    evaluation_strategy: steps
+    eval_steps: 500
+    loss_function: CE
+
+log:
+    logging_dir: ./logs
+    logging_steps: 100

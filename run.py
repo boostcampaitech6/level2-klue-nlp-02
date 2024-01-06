@@ -1,19 +1,16 @@
-import argparse
+import yaml
 
 from inference import predict
 from train import train
 
 
-def main(args):
-    train()
-    predict(args)
+def main(configs):
+    train(configs)
+    predict(configs)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    with open("config/config.yaml") as f:
+        configs = yaml.safe_load(f)
 
-    # model dir
-    parser.add_argument("--model_dir", type=str, default="./best_model")
-    args = parser.parse_args()
-    print(args)
-    main(args)
+    main(configs)

@@ -1,9 +1,10 @@
-import argparse
+import re
 
 import numpy as np
 import pandas as pd
 import torch
 import torch.nn.functional as F
+import yaml
 from torch.utils.data import DataLoader
 from tqdm import tqdm
 from transformers import AutoTokenizer
@@ -41,23 +42,31 @@ def inference(model, tokenized_sent, device):
     return np.concatenate(output_pred).tolist(), np.concatenate(output_prob, axis=0).tolist()
 
 
-def predict(args):
-    set_seed(42)
+def predict(configs):
+    set_seed(configs["seed"])
+
+    MODEL_NAME = configs["model"]["model_name"]
+
+    output_path = configs["data"]["output_path"]
+    predict_path = configs["data"]["predict_path"]
+    submission_path = configs["data"]["submission_path"]
+
+    saved_name = re.sub("/", "_", MODEL_NAME)
+    learning_rate = float(configs["train"]["learning_rate"])
+    max_epoch = configs["train"]["max_epoch"]
+
     """
     주어진 dataset csv 파일과 같은 형태일 경우 inference 가능한 코드입니다.
     """
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     # load tokenizer
-    Tokenizer_NAME = "klue/bert-base"
-    tokenizer = AutoTokenizer.from_pretrained(Tokenizer_NAME)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
     # load my model
-    MODEL_NAME = args.model_dir  # model dir.
-    model = get_model(MODEL_NAME, device)
+    model = get_model(f"{output_path}{saved_name}_{max_epoch}_{learning_rate}", device)
 
     # load test datset
-    test_dataset_dir = "./data/test_data.csv"
-    test_id, Re_test_dataset = load_test_dataset(test_dataset_dir, tokenizer)
+    test_id, Re_test_dataset = load_test_dataset(predict_path, tokenizer)
 
     # predict answer
     pred_answer, output_prob = inference(model, Re_test_dataset, device)  # model에서 class 추론
@@ -74,20 +83,17 @@ def predict(args):
         }
     )
 
-    output.to_csv("./prediction/submission.csv", index=False)  # 최종적으로 완성된 예측한 라벨 csv 파일 형태로 저장.
+    output.to_csv(f"{submission_path}{saved_name}_{learning_rate}.csv", index=False)  # 최종적으로 완성된 예측한 라벨 csv 파일 형태로 저장.
     # 필수!!
     print("---- Finish! ----")
 
 
-def main(args):
-    predict(args)
+def main(configs):
+    predict(configs)
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
+    with open("config/config.yaml") as f:
+        configs = yaml.safe_load(f)
 
-    # model dir
-    parser.add_argument("--model_dir", type=str, default="./best_model")
-    args = parser.parse_args()
-    print(args)
-    main(args)
+    main(configs)
