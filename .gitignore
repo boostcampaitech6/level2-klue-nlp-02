@@ -143,3 +143,6 @@ results/
 
 #output
 best_model/
+
+#wandb logs
+wandb/

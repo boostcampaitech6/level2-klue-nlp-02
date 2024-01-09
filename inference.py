@@ -83,7 +83,9 @@ def predict(configs):
         }
     )
 
-    output.to_csv(f"{submission_path}{saved_name}_{learning_rate}.csv", index=False)  # 최종적으로 완성된 예측한 라벨 csv 파일 형태로 저장.
+    output.to_csv(
+        f"{submission_path}{saved_name}_{max_epoch}_{learning_rate}.csv", index=False
+    )  # 최종적으로 완성된 예측한 라벨 csv 파일 형태로 저장.
     # 필수!!
     print("---- Finish! ----")
 

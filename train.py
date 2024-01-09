@@ -4,6 +4,7 @@ import torch
 import yaml
 from transformers import AutoTokenizer, TrainingArguments
 
+import wandb
 from dataset.load_data import load_and_process_dataset_for_train
 from trainer.trainer import NewTrainer
 from utils.compute_metrics import compute_metrics
@@ -14,6 +15,22 @@ from utils.set_seed import set_seed
 def train(configs):
     # 시드 고정
     set_seed(configs["seed"])
+
+    wandb.init(
+        # set the wandb project where this run will be logged
+        project=configs["wandb_params"]["project"],
+        entity=configs["wandb_params"]["entity"],
+        allow_val_change=True,
+        # track hyperparameters and run metadata
+        config={
+            "learning_rate": float(configs["train"]["learning_rate"]),
+            "model": configs["model"]["model_name"],
+            "dataset": configs["wandb_params"]["dataset"],
+            "epochs": configs["train"]["max_epoch"],
+        },
+    )
+    wandb.run.name = configs["wandb_params"]["run_name"]
+    wandb.run.save()
 
     # 가독성을 위한 컨픽 지정
     train_path = configs["data"]["train_path"]
@@ -70,6 +87,7 @@ def train(configs):
         # `epoch`: Evaluate every end of epoch.
         eval_steps=eval_steps,  # evaluation step.
         load_best_model_at_end=True,
+        report_to="wandb",
     )
 
     # 나중에 loss_function 을 config으로 추가
