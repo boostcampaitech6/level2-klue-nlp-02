@@ -88,13 +88,13 @@ def train(configs):
 
     # train model
     trainer.train()
-    model.save_pretrained(f"{output_path}{saved_name}_{max_epoch}_{learning_rate}")
+    model.save_pretrained(f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}")
 
 
 def main(configs):
     wandb.login()
-    run_name = f"{configs['model']['model_name']}_{configs['train']['max_epoch']}_{configs['train']['learning_rate']}"
-    wandb.init(project="project_name", entity="dunning-kruger-klue", name=run_name)
+    run_name = f"{configs['model']['model_name']}_{configs['train']['batch_size']}_{configs['train']['max_epoch']}_{configs['train']['learning_rate']}"
+    wandb.init(project="your_project_name", entity="dunning-kruger-klue", name=run_name)
     train(configs)
 
 

@@ -15,7 +15,7 @@ from utils.set_seed import set_seed
 
 def train(configs):
     # 시드 고정
-    set_seed(configs["seed"])
+    set_seed(wandb.run.config["seed"])
 
     # 가독성을 위한 컨픽 지정
     train_path = configs["data"]["train_path"]
@@ -87,13 +87,13 @@ def train(configs):
 
     # train model
     trainer.train()
-    model.save_pretrained(f"{output_path}{saved_name}_{max_epoch}_{learning_rate}")
+    model.save_pretrained(f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}")
 
 
 def main(configs):
     wandb.login()
     wandb.init(config=configs)
-    run_name = f"{configs['model']['model_name']}_{wandb.run.config['max_epoch']}_{wandb.run.config['learning_rate']}"
+    run_name = f"{configs['model']['model_name']}_{wandb.run.config['batch_size']}_{wandb.run.config['max_epoch']}_{wandb.run.config['learning_rate']}"
     wandb.run.name = run_name
     train(configs)
 
