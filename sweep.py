@@ -15,26 +15,25 @@ from utils.set_seed import set_seed
 
 def train(configs):
     # 시드 고정
-    set_seed(configs["seed"])
+    set_seed(wandb.run.config["seed"])
 
     # 가독성을 위한 컨픽 지정
     train_path = configs["data"]["train_path"]
     dev_path = configs["data"]["dev_path"]
     output_path = configs["data"]["output_path"]
 
-    MODEL_NAME = configs["model"]["model_name"]
+    MODEL_NAME = wandb.run.config["model_name"]
     saved_name = re.sub("/", "_", MODEL_NAME)
     save_total_limit = configs["model"]["save_total_limit"]
     save_steps = configs["model"]["save_steps"]
-
-    learning_rate = float(configs["train"]["learning_rate"])
-    batch_size = configs["train"]["batch_size"]
-    max_epoch = configs["train"]["max_epoch"]
-    warmup_steps = configs["train"]["warmup_steps"]
-    weight_decay = float(configs["train"]["weight_decay"])
-    evaluation_strategy = configs["train"]["evaluation_strategy"]
-    eval_steps = configs["train"]["eval_steps"]
-    loss_function = configs["train"]["loss_function"]
+    learning_rate = float(wandb.run.config["learning_rate"])
+    batch_size = wandb.run.config["batch_size"]
+    max_epoch = wandb.run.config["max_epoch"]
+    warmup_steps = wandb.run.config["warmup_steps"]
+    weight_decay = float(wandb.run.config["weight_decay"])
+    evaluation_strategy = wandb.run.config["evaluation_strategy"]
+    eval_steps = wandb.run.config["eval_steps"]
+    loss_function = wandb.run.config["loss_function"]
 
     logging_dir = configs["log"]["logging_dir"]
     logging_steps = configs["log"]["logging_steps"]
@@ -93,12 +92,13 @@ def train(configs):
 
 def main(configs):
     wandb.login()
-    run_name = f"{configs['model']['model_name']}_{configs['train']['batch_size']}_{configs['train']['max_epoch']}_{configs['train']['learning_rate']}"
-    wandb.init(project="your_project_name", entity="dunning-kruger-klue", name=run_name)
+    wandb.init(config=configs)
+    run_name = f"{wandb.run.config['model_name']}_{wandb.run.config['batch_size']}_{wandb.run.config['max_epoch']}_{wandb.run.config['learning_rate']}"
+    wandb.run.name = run_name
     train(configs)
 
 
 if __name__ == "__main__":
-    with open("config/config.yaml") as f:
+    with open("./config/sweep.yaml") as f:
         configs = yaml.safe_load(f)
     main(configs)
