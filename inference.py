@@ -15,12 +15,12 @@ from utils.labeling import num_to_label
 from utils.set_seed import set_seed
 
 
-def inference(model, tokenized_sent, device):
+def inference(model, tokenized_sent, batch_size, device):
     """
     test dataset을 DataLoader로 만들어 준 후,
     batch_size로 나눠 model이 예측 합니다.
     """
-    dataloader = DataLoader(tokenized_sent, batch_size=16, shuffle=False)
+    dataloader = DataLoader(tokenized_sent, batch_size=batch_size, shuffle=False)
     model.eval()
     output_pred = []
     output_prob = []
@@ -52,6 +52,7 @@ def predict(configs):
     submission_path = configs["data"]["submission_path"]
 
     saved_name = re.sub("/", "_", MODEL_NAME)
+    batch_size = configs["train"]["batch_size"]
     learning_rate = float(configs["train"]["learning_rate"])
     max_epoch = configs["train"]["max_epoch"]
 
@@ -63,13 +64,13 @@ def predict(configs):
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
     # load my model
-    model = get_model(f"{output_path}{saved_name}_{max_epoch}_{learning_rate}", device)
+    model = get_model(f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}", device)
 
     # load test datset
     test_id, Re_test_dataset = load_test_dataset(predict_path, tokenizer)
 
     # predict answer
-    pred_answer, output_prob = inference(model, Re_test_dataset, device)  # model에서 class 추론
+    pred_answer, output_prob = inference(model, Re_test_dataset, batch_size, device)  # model에서 class 추론
     pred_answer = num_to_label(pred_answer)  # 숫자로 된 class를 원래 문자열 라벨로 변환.
 
     # make csv file with predicted answer
@@ -83,7 +84,9 @@ def predict(configs):
         }
     )
 
-    output.to_csv(f"{submission_path}{saved_name}_{learning_rate}.csv", index=False)  # 최종적으로 완성된 예측한 라벨 csv 파일 형태로 저장.
+    output.to_csv(
+        f"{submission_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}.csv", index=False
+    )  # 최종적으로 완성된 예측한 라벨 csv 파일 형태로 저장.
     # 필수!!
     print("---- Finish! ----")
 
