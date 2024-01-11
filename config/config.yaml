@@ -2,18 +2,18 @@ seed: 42
 
 data:
     output_path: ./best_model/
-    train_path: ./data/train_dist_2.csv
-    dev_path: ./data/dev_dist_2.csv
+    train_path: ./data/train_dist_1.csv
+    dev_path: ./data/dev_dist_1.csv
     predict_path: ./data/test.csv
     submission_path: ./prediction/
 
 model:
-    model_name: kakaobank/kf-deberta-base
+    model_name: gogamza/kobart-base-v2
     save_total_limit: 5
     save_steps: 1000
 
 train:
-    learning_rate: 5e-5
+    learning_rate: 1e-5
     batch_size: 16
     max_epoch: 20
     warmup_steps: 500
@@ -30,5 +30,4 @@ wandb_params:
     project: 'dayeon'
     entity: 'dunning-kruger-klue'
     allow_val_change: True
-    dataset: 'dist_2'
-    run_name: 'kakaobank_kf-deberta-base_20_5e-5'
+    dataset: 'dist_3'

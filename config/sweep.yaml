@@ -1,7 +1,7 @@
 program: sweep.py
 name: for_metric
 entity: dunning-kruger-klue
-project: your_project_name
+project: dayeon
 method: grid
 metric:
   goal: maximize
@@ -16,7 +16,7 @@ data:
     submission_path: ./prediction/
 
 model:
-    model_name: klue/bert-base
+    model_name: gogamza/kobart-base-v2
     save_total_limit: 1
     save_steps: 1000
 
@@ -24,11 +24,11 @@ parameters:
   seed:
     values: [42]
   learning_rate:
-    values: [1e-5, 2e-5]
+    values: [1e-5, 2e-5, 5e-5]
   batch_size:
-    values: [32]
+    values: [16, 32]
   max_epoch:
-    values: [3]
+    values: [10]
   warmup_steps:
     value:
       500
