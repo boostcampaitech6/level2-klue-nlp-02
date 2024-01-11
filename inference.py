@@ -55,6 +55,7 @@ def predict(configs):
     batch_size = configs["train"]["batch_size"]
     learning_rate = float(configs["train"]["learning_rate"])
     max_epoch = configs["train"]["max_epoch"]
+    loss_function = configs["train"]["loss_function"]
 
     """
     주어진 dataset csv 파일과 같은 형태일 경우 inference 가능한 코드입니다.
@@ -64,7 +65,7 @@ def predict(configs):
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
     # load my model
-    model = get_model(f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}", device)
+    model = get_model(f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}", device)
 
     # load test datset
     test_id, Re_test_dataset = load_test_dataset(predict_path, tokenizer)

@@ -88,7 +88,7 @@ def train(configs):
 
     # train model
     trainer.train()
-    model.save_pretrained(f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}")
+    model.save_pretrained(f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}")
 
 
 def main(configs):
