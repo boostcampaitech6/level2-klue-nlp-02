@@ -30,7 +30,8 @@ def train(configs):
             "epochs": configs["train"]["max_epoch"],
         },
     )
-    wandb.run.name = configs["wandb_params"]["run_name"]
+    run_name = f"{configs['model']['model_name']}_{configs['train']['batch_size']}_{configs['train']['max_epoch']}_{configs['train']['learning_rate']}"
+    wandb.run.name = run_name
     wandb.run.save()
 
     # 가독성을 위한 컨픽 지정
@@ -108,9 +109,8 @@ def train(configs):
 
 
 def main(configs):
-    wandb.login()
-    run_name = f"{configs['model']['model_name']}_{configs['train']['batch_size']}_{configs['train']['max_epoch']}_{configs['train']['learning_rate']}"
-    wandb.init(project="your_project_name", entity="dunning-kruger-klue", name=run_name)
+    # wandb.login()
+    # wandb.init(project="dayeon", entity="dunning-kruger-klue", name=run_name)
     train(configs)
 
 
