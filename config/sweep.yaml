@@ -16,11 +16,13 @@ data:
     submission_path: ./prediction/
 
 model:
-    model_name: gogamza/kobart-base-v2
     save_total_limit: 1
     save_steps: 1000
 
 parameters:
+  model_name:
+    values:
+      ['klue/bert-base','monologg/koelectra-base-v3-discriminator']
   seed:
     values: [42]
   learning_rate:

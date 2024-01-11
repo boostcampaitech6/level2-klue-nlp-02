@@ -22,7 +22,7 @@ def train(configs):
     dev_path = configs["data"]["dev_path"]
     output_path = configs["data"]["output_path"]
 
-    MODEL_NAME = configs["model"]["model_name"]
+    MODEL_NAME = wandb.run.config["model_name"]
     saved_name = re.sub("/", "_", MODEL_NAME)
     save_total_limit = configs["model"]["save_total_limit"]
     save_steps = configs["model"]["save_steps"]
@@ -93,7 +93,7 @@ def train(configs):
 def main(configs):
     wandb.login()
     wandb.init(config=configs)
-    run_name = f"{configs['model']['model_name']}_{wandb.run.config['batch_size']}_{wandb.run.config['max_epoch']}_{wandb.run.config['learning_rate']}"
+    run_name = f"{wandb.run.config['model_name']}_{wandb.run.config['batch_size']}_{wandb.run.config['max_epoch']}_{wandb.run.config['learning_rate']}"
     wandb.run.name = run_name
     train(configs)
 
