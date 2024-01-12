@@ -71,39 +71,48 @@ def tokenized_dataset(dataset, tokenizer, method):
         temp = ""
         if method == "em2":  # entity_marker_2
             # [PER]조지 해리슨[/PER]이 쓰고
-            temp = f"[{t01}]{e01}[/{t01}] [SEP] [{t02}]{e02}[/{t02}]"
+            temp = f"[{t01}]{e01}[/{t01}] [{t02}]{e02}[/{t02}]"
 
         elif method == "tem":  # typed_entity_marker
             # <O:PER> 조지 해리슨 </O:PER>이 쓰고
-            temp = f"<S:{t01}> {e01} </S:{t01}> [SEP] <O:{t02}> {e02} </O:{t02}>"
+            temp = f"<S:{t01}> {e01} </S:{t01}> <O:{t02}> {e02} </O:{t02}>"
 
         elif method == "tem_punt":  # typed_entity_marker (punt)
             # # ^ PER ^ 조지 해리슨 #이 쓰고
-            temp = f" @ * {t01} * {e01} @ [SEP] # ^ {t02} ^ {e02} # "
+            temp = f" @ * {t01} * {e01} @ # ^ {t02} ^ {e02} # "
 
-        elif method == "punt_ori":  # typed entity marker (punt) orginal
-            # # ^ PER ^ 조지 해리슨 #이 쓰고 [SEP] 조지 해리슨이 쓰고
-            temp = f" @ * {t01} * {e01} @ [SEP] # ^ {t02} ^ {e02} # "
+        elif method == "test":
+            temp = f" 에서 {e01} 과 {e02} 는 무슨 관계?"
 
-        elif method == "punt_multi":  # multi-sentence prompt
-            # 아직 미완
-            pass
+        elif method == "test1":
+            temp = f" @ * {t01} * {e01} @ # ^ {t02} ^ {e02} # 는 무슨 관계?"
 
         else:
-            # 조지 해리쓴이 쓰고
             temp = e01 + "[SEP]" + e02
 
         concat_entity.append(temp)
 
-    tokenized_sentences = tokenizer(
-        concat_entity,
-        list(dataset["sentence"]),
-        return_tensors="pt",
-        padding=True,
-        truncation=True,
-        max_length=256,
-        add_special_tokens=True,
-    )
+    if method == "test":
+        tokenized_sentences = tokenizer(
+            list(dataset["sentence"]),
+            concat_entity,
+            return_tensors="pt",
+            padding=True,
+            truncation=True,
+            max_length=128,
+            add_special_tokens=True,
+        )
+
+    else:
+        tokenized_sentences = tokenizer(
+            concat_entity,
+            list(dataset["sentence"]),
+            return_tensors="pt",
+            padding=True,
+            truncation=True,
+            max_length=128,
+            add_special_tokens=True,
+        )
 
     return tokenized_sentences
 
@@ -143,19 +152,21 @@ def make_sentence_mark(method, sentence, subject, object):
         sentence = sentence.replace(subject["word"], f"<S:{subject['type']}> {subject['word']} </S:{subject['type']}>")
         sentence = sentence.replace(object["word"], f"<O:{object['type']}> {object['word']} </O:{object['type']}>")
 
-    elif method == "tem_punt":  # typed_entity_marker (punt)
+    elif method == "tem_punt" or method == "test" or method == "test1":  # typed_entity_marker (punt)
         sentence = sentence.replace(subject["word"], f" @ * {subject['type']} * {subject['word']} @ ")
         sentence = sentence.replace(object["word"], f" # ^ {object['type']} ^ {object['word']} # ")
-
-    elif method == "punt_ori":  # typed entity marker (punt) orginal
-        sentence2 = sentence.replace(subject["word"], f" @ * {subject['type']} * {subject['word']} @ ")
-        sentence2 = sentence.replace(object["word"], f" # ^ {object['type']} ^ {object['word']} # ")
-        sentence = sentence + sentence2
-
-    elif method == "punt_multi":  # multi-sentence prompt
-        pass
 
     else:
         pass
 
     return sentence
+
+
+def token_confirm(dataset, tokenizer, method):
+    out_dataset = preprocessing_dataset(dataset, method)
+    df = pd.DataFrame()
+
+    df["sentence"] = out_dataset["sentence"]
+    df["tokenized"] = out_dataset["sentence"].apply(tokenizer.tokenize)
+
+    df.to_csv("tokenized.csv", index=False)
