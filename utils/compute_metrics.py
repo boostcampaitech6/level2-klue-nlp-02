@@ -4,9 +4,8 @@ import numpy as np
 import plotly.figure_factory as ff
 import plotly.graph_objects as go
 import sklearn
-from sklearn.metrics import accuracy_score, auc, confusion_matrix, f1_score, precision_recall_curve, roc_curve
-
 import wandb
+from sklearn.metrics import accuracy_score, auc, confusion_matrix, f1_score, precision_recall_curve, roc_curve
 
 
 def klue_re_micro_f1(preds, labels):

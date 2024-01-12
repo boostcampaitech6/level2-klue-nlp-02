@@ -1,7 +1,7 @@
 program: sweep.py
 name: for_metric
 entity: dunning-kruger-klue
-project: donghyeon
+project: minari
 method: grid
 metric:
   goal: maximize
@@ -22,15 +22,15 @@ model:
 parameters:
   model_name:
     values:
-      ['klue/bert-base','monologg/koelectra-base-v3-discriminator']
+      'klue/roberta-large'
   seed:
     values: [42]
   learning_rate:
-    values: [1e-5]
+    values: [1e-5,3e-5,5e-5]
   batch_size:
     values: [32]
   max_epoch:
-    values: [2]
+    values: [20]
   warmup_steps:
     value:
       500
@@ -41,7 +41,7 @@ parameters:
   eval_steps:
     value: 1000
   loss_function:
-    value: 'CE'
+    value: 'FocalLoss'
 
 log:
     logging_dir: ./logs
