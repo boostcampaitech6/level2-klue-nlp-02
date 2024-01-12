@@ -1,0 +1,227 @@
+import os
+import pickle
+import random
+import re
+import sys
+
+import pandas as pd
+import yaml
+
+sys.path.append(os.path.dirname(os.path.abspath(os.path.dirname(__file__))))
+
+wordnet = {}
+with open("wordnet.pickle", "rb") as f:
+    wordnet = pickle.load(f)
+
+with open("config/config.yaml") as f:
+    configs = yaml.safe_load(f)
+
+
+# 한글만 남기고 나머지는 삭제
+def get_only_hangul(line):
+    parseText = re.compile("/ ^[ㄱ-ㅎㅏ-ㅣ가-힣]*$/").sub("", line)
+
+    return parseText
+
+
+########################################################################
+# Synonym replacement
+# Replace n words in the sentence with synonyms from wordnet
+########################################################################
+def synonym_replacement(words, n):
+    new_words = words.copy()
+    random_word_list = list(set([word for word in words]))
+    random.shuffle(random_word_list)
+    num_replaced = 0
+    for random_word in random_word_list:
+        synonyms = get_synonyms(random_word)
+        if len(synonyms) >= 1:
+            synonym = random.choice(list(synonyms))
+            new_words = [synonym if word == random_word else word for word in new_words]
+            num_replaced += 1
+        if num_replaced >= n:
+            break
+
+    if len(new_words) != 0:
+        sentence = " ".join(new_words)
+        new_words = sentence.split(" ")
+
+    else:
+        new_words = ""
+
+    return new_words
+
+
+def get_synonyms(word):
+    synomyms = []
+
+    try:
+        for syn in wordnet[word]:
+            for s in syn:
+                synomyms.append(s)
+    except Exception:
+        pass
+
+    return synomyms
+
+
+########################################################################
+# Random deletion
+# Randomly delete words from the sentence with probability p
+########################################################################
+def random_deletion(words, p):
+    if len(words) == 1:
+        return words
+
+    new_words = []
+    for word in words:
+        r = random.uniform(0, 1)
+        if r > p:
+            new_words.append(word)
+
+    if len(new_words) == 0:
+        rand_int = random.randint(0, len(words) - 1)
+        return [words[rand_int]]
+
+    return new_words
+
+
+########################################################################
+# Random swap
+# Randomly swap two words in the sentence n times
+########################################################################
+def random_swap(words, n):
+    new_words = words.copy()
+    for _ in range(n):
+        new_words = swap_word(new_words)
+
+    return new_words
+
+
+def swap_word(new_words):
+    random_idx_1 = random.randint(0, len(new_words) - 1)
+    random_idx_2 = random_idx_1
+    counter = 0
+
+    while random_idx_2 == random_idx_1:
+        random_idx_2 = random.randint(0, len(new_words) - 1)
+        counter += 1
+        if counter > 3:
+            return new_words
+
+    new_words[random_idx_1], new_words[random_idx_2] = new_words[random_idx_2], new_words[random_idx_1]
+    return new_words
+
+
+########################################################################
+# Random insertion
+# Randomly insert n words into the sentence
+########################################################################
+def random_insertion(words, n):
+    new_words = words.copy()
+    for _ in range(n):
+        add_word(new_words)
+
+    return new_words
+
+
+def add_word(new_words):
+    synonyms = []
+    counter = 0
+    while len(synonyms) < 1:
+        if len(new_words) >= 1:
+            random_word = new_words[random.randint(0, len(new_words) - 1)]
+            synonyms = get_synonyms(random_word)
+            counter += 1
+        else:
+            random_word = ""
+
+        if counter >= 10:
+            return
+
+    random_synonym = synonyms[0]
+    random_idx = random.randint(0, len(new_words) - 1)
+    new_words.insert(random_idx, random_synonym)
+
+
+def EDA(sentence, alpha_sr=0.1, alpha_ri=0.1, alpha_rs=0.1, p_rd=0.1, num_aug=4):
+    sentence = get_only_hangul(sentence)
+    words = sentence.split(" ")
+    words = [word for word in words if word != ""]
+    num_words = len(words)
+
+    augmented_sentences = []
+    num_new_per_technique = int(num_aug / 4) + 1
+
+    n_sr = max(1, int(alpha_sr * num_words))
+    n_ri = max(1, int(alpha_ri * num_words))
+    n_rs = max(1, int(alpha_rs * num_words))
+
+    # sr - 유의어 교체
+    for _ in range(num_new_per_technique):
+        a_words = synonym_replacement(words, n_sr)
+        augmented_sentences.append(" ".join(a_words))
+
+    # ri - 랜덤 삽입
+    for _ in range(num_new_per_technique):
+        a_words = random_insertion(words, n_ri)
+        augmented_sentences.append(" ".join(a_words))
+
+    # rs - 랜덤 교체
+    for _ in range(num_new_per_technique):
+        a_words = random_swap(words, n_rs)
+        augmented_sentences.append(" ".join(a_words))
+
+    # rd - 랜덤 삭제
+    for _ in range(num_new_per_technique):
+        a_words = random_deletion(words, p_rd)
+        augmented_sentences.append(" ".join(a_words))
+
+    augmented_sentences = [get_only_hangul(sentence) for sentence in augmented_sentences]
+    random.shuffle(augmented_sentences)
+
+    if num_aug >= 1:
+        augmented_sentences = augmented_sentences[:num_aug]
+    else:
+        keep_prob = num_aug / len(augmented_sentences)
+        augmented_sentences = [s for s in augmented_sentences if random.uniform(0, 1) < keep_prob]
+
+    augmented_sentences.append(sentence)
+
+    return augmented_sentences
+
+
+def eda_aug(df):
+    augmented_sentences = []
+    df_len = len(df.index)
+
+    # sentence 10% 추출
+    choice = df.sample(n=int(df_len * 0.1))
+
+    # 추출한 데이터 증강한 후 데이터프레임에 추가
+    for i in range(len(choice)):
+        augmented_sentences = EDA(choice["sentence"].iloc[i])
+        augmented_sentences = list(set(augmented_sentences))
+
+        for j in augmented_sentences:
+            if j != choice["sentence"].iloc[i]:
+                temp_df = pd.DataFrame(
+                    {
+                        "id": [choice["id"].iloc[i]],
+                        "sentence": j,
+                        "subject_entity": choice["subject_entity"].iloc[i],
+                        "object_entity": choice["object_entity"].iloc[i],
+                        "label": choice["label"].iloc[i],
+                        "source": choice["source"].iloc[i],
+                    }
+                )
+                df = pd.concat([df, temp_df], ignore_index=True)
+    return df
+
+
+df = pd.read_csv(configs["data"]["data_path"])
+
+aug_df = eda_aug(df)
+col = aug_df.columns
+
+aug_df.to_csv("/opt/ml/level2-klue-nlp-02/data/new_eda_data_10.csv", columns=col, index=False)

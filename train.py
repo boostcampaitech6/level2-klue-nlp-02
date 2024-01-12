@@ -1,11 +1,11 @@
 import re
 
 import torch
+import wandb
 import yaml
 from transformers import AutoTokenizer, TrainingArguments
 from transformers.integrations import WandbCallback
 
-import wandb
 from dataset.load_data import load_and_process_dataset_for_train
 from trainer.trainer import NewTrainer
 from utils.compute_metrics import compute_metrics
