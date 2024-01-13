@@ -22,7 +22,7 @@ model:
 parameters:
   model_name:
     values:
-      ['klue/bert-base','monologg/koelectra-base-v3-discriminator']
+      ['gogamza/kobart-base-v2']
   seed:
     values: [42]
   learning_rate:
@@ -30,7 +30,7 @@ parameters:
   batch_size:
     values: [16, 32]
   max_epoch:
-    values: [10]
+    values: [3]
   warmup_steps:
     value:
       500

@@ -8,14 +8,14 @@ data:
     submission_path: ./prediction/
 
 model:
-    model_name: gogamza/kobart-base-v2
+    model_name: kakaobank/kf-deberta-base
     save_total_limit: 5
     save_steps: 1000
 
 train:
     learning_rate: 1e-5
     batch_size: 16
-    max_epoch: 20
+    max_epoch: 3
     warmup_steps: 500
     weight_decay: 0.01
     evaluation_strategy: steps
@@ -30,4 +30,4 @@ wandb_params:
     project: 'dayeon'
     entity: 'dunning-kruger-klue'
     allow_val_change: True
-    dataset: 'dist_3'
+    dataset: 'dist_1'

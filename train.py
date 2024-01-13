@@ -66,6 +66,7 @@ def train(configs):
 
     # 모델 불러오기
     model = get_model(MODEL_NAME, device)
+    model.resize_token_embeddings(len(tokenizer))
 
     print(model.config)
 

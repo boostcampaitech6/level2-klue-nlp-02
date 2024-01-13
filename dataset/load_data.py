@@ -52,6 +52,17 @@ def load_data(dataset_dir):
     return dataset
 
 
+# create token_type_ids for BART
+def create_token_type_ids(tokenizer, concat, sen):
+    token_type_ids = []
+
+    for text, sentence in zip(concat, sen):
+        tokens = tokenizer.encode_plus(text, sentence, add_special_tokens=True, return_token_type_ids=True)
+        token_type_ids.append(tokens["token_type_ids"])
+
+    return token_type_ids
+
+
 def tokenized_dataset(dataset, tokenizer):
     """tokenizer에 따라 sentence를 tokenizing 합니다."""
     concat_entity = []
@@ -61,9 +72,17 @@ def tokenized_dataset(dataset, tokenizer):
         temp = e01 + "[SEP]" + e02
         concat_entity.append(temp)
 
+    sen = list(dataset["sentence"])
+
+    if not tokenizer.sep_token:
+        new_special_token = "[SEP]"
+        tokenizer.add_special_tokens({"sep_token": new_special_token})
+
+        create_token_type_ids(tokenizer, concat_entity, sen)
+
     tokenized_sentences = tokenizer(
         concat_entity,
-        list(dataset["sentence"]),
+        sen,
         return_tensors="pt",
         padding=True,
         truncation=True,
