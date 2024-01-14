@@ -8,6 +8,9 @@ metric:
   name: eval/micro f1 score
 
 
+preprocessing:
+    entity_method: test
+
 data:
     output_path: ./best_model/
     train_path: ./data/train_dist_1.csv

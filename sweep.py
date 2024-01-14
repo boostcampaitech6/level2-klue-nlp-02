@@ -18,6 +18,8 @@ def train(configs):
     set_seed(wandb.run.config["seed"])
 
     # 가독성을 위한 컨픽 지정
+    entity_method = configs["preprocessing"]["entity_method"]
+
     train_path = configs["data"]["train_path"]
     dev_path = configs["data"]["dev_path"]
     output_path = configs["data"]["output_path"]
@@ -40,8 +42,8 @@ def train(configs):
 
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
-    train_dataset = load_and_process_dataset_for_train(train_path, tokenizer)
-    dev_dataset = load_and_process_dataset_for_train(dev_path, tokenizer)
+    train_dataset = load_and_process_dataset_for_train(train_path, tokenizer, entity_method)
+    dev_dataset = load_and_process_dataset_for_train(dev_path, tokenizer, entity_method)
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)

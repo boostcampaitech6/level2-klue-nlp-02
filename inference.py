@@ -47,6 +47,8 @@ def predict(configs):
 
     MODEL_NAME = configs["model"]["model_name"]
 
+    entity_method = configs["preprocessing"]["entity_method"]
+
     output_path = configs["data"]["output_path"]
     predict_path = configs["data"]["predict_path"]
     submission_path = configs["data"]["submission_path"]
@@ -66,10 +68,12 @@ def predict(configs):
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
     # load my model
-    model = get_model(f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}", device)
+    model = get_model(
+        f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}_test2", device
+    )
 
     # load test datset
-    test_id, Re_test_dataset = load_test_dataset(predict_path, tokenizer)
+    test_id, Re_test_dataset = load_test_dataset(predict_path, tokenizer, entity_method)
 
     # predict answer
     pred_answer, output_prob = inference(model, Re_test_dataset, batch_size, device)  # model에서 class 추론
@@ -87,7 +91,7 @@ def predict(configs):
     )
 
     output.to_csv(
-        f"{submission_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}.csv", index=False
+        f"{submission_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}_test2.csv", index=False
     )  # 최종적으로 완성된 예측한 라벨 csv 파일 형태로 저장.
     # 필수!!
     print("---- Finish! ----")

@@ -30,11 +30,13 @@ def train(configs):
             "epochs": configs["train"]["max_epoch"],
         },
     )
-    run_name = f"{configs['model']['model_name']}_{configs['train']['batch_size']}_{configs['train']['max_epoch']}_{configs['train']['learning_rate']}_focal"
+    run_name = f"{configs['model']['model_name']}_{configs['train']['batch_size']}_{configs['train']['max_epoch']}_{configs['train']['learning_rate']}_test2"
     wandb.run.name = run_name
     wandb.run.save()
 
     # 가독성을 위한 컨픽 지정
+    entity_method = configs["preprocessing"]["entity_method"]
+
     train_path = configs["data"]["train_path"]
     dev_path = configs["data"]["dev_path"]
     output_path = configs["data"]["output_path"]
@@ -58,8 +60,8 @@ def train(configs):
 
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
 
-    train_dataset = load_and_process_dataset_for_train(train_path, tokenizer)
-    dev_dataset = load_and_process_dataset_for_train(dev_path, tokenizer)
+    train_dataset = load_and_process_dataset_for_train(train_path, tokenizer, entity_method)
+    dev_dataset = load_and_process_dataset_for_train(dev_path, tokenizer, entity_method)
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
@@ -106,7 +108,7 @@ def train(configs):
 
     # train model
     trainer.train()
-    model.save_pretrained(f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}")
+    model.save_pretrained(f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}_test2")
 
 
 def main(configs):

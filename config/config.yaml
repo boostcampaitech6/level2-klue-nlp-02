@@ -1,5 +1,8 @@
 seed: 42
 
+preprocessing:
+    entity_method: test2
+
 data:
     output_path: ./best_model/
     train_path: ./data/train_dist_1.csv

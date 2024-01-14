@@ -61,20 +61,10 @@ def load_data(dataset_dir, method):
     return dataset
 
 
-# create token_type_ids for BART
-def create_token_type_ids(tokenizer, concat, sen):
-    token_type_ids = []
-
-    for text, sentence in zip(concat, sen):
-        tokens = tokenizer.encode_plus(text, sentence, add_special_tokens=True, return_token_type_ids=True)
-        token_type_ids.append(tokens["token_type_ids"])
-
-    return token_type_ids
-
-
 def tokenized_dataset(dataset, tokenizer, method):
     """tokenizer에 따라 sentence를 tokenizing 합니다."""
     concat_entity = []
+    token_type_ids = False if "bart" in tokenizer.name_or_path else True  # token_type_ids를 리턴할지 말지
 
     for e01, e02, t01, t02 in zip(
         dataset["subject_entity"], dataset["object_entity"], dataset["subject_type"], dataset["object_type"]
@@ -98,17 +88,20 @@ def tokenized_dataset(dataset, tokenizer, method):
         elif method == "test1":
             temp = f" @ * {t01} * {e01} @ # ^ {t02} ^ {e02} # 는 무슨 관계?"
 
+        elif method == "test2":
+            temp = f" 에서 @ * {t01} * {e01} @ 와 # ^ {t02} ^ {e02} # 는 무슨 관계?"
+
         else:
             # to identify whether the tokenizer is BERT-based or BART-based
-            if tokenizer.sep_token:
-                temp = e01 + "[SEP]" + e02
-
-            else:
+            if "bart" in tokenizer.name_or_path:
                 temp = e01 + "</s>" + e02
+
+            elif "bert" in tokenizer.name_or_path:
+                temp = e01 + "[SEP]" + e02
 
         concat_entity.append(temp)
 
-    if method == "test":
+    if method == "test" or method == "test1" or method == "test2":
         tokenized_sentences = tokenizer(
             list(dataset["sentence"]),
             concat_entity,
@@ -117,6 +110,7 @@ def tokenized_dataset(dataset, tokenizer, method):
             truncation=True,
             max_length=128,
             add_special_tokens=True,
+            return_token_type_ids=token_type_ids,
         )
 
     else:
@@ -128,6 +122,7 @@ def tokenized_dataset(dataset, tokenizer, method):
             truncation=True,
             max_length=128,
             add_special_tokens=True,
+            return_token_type_ids=token_type_ids,
         )
 
     return tokenized_sentences
@@ -159,7 +154,7 @@ def load_test_dataset(dataset_dir, tokenizer, method):
 
 
 def make_sentence_mark(method, sentence, subject, object):
-    print(method)
+    # print(method)
     if method == "em2":  # entity_marker_2
         sentence = sentence.replace(subject["word"], f"[{subject['type']}]{subject['word']}[/{subject['type']}")
         sentence = sentence.replace(object["word"], f"[{object['type']}]{object['word']}[/{object['type']}]")
@@ -168,7 +163,9 @@ def make_sentence_mark(method, sentence, subject, object):
         sentence = sentence.replace(subject["word"], f"<S:{subject['type']}> {subject['word']} </S:{subject['type']}>")
         sentence = sentence.replace(object["word"], f"<O:{object['type']}> {object['word']} </O:{object['type']}>")
 
-    elif method == "tem_punt" or method == "test" or method == "test1":  # typed_entity_marker (punt)
+    elif (
+        method == "tem_punt" or method == "test" or method == "test1" or method == "test2"
+    ):  # typed_entity_marker (punt)
         sentence = sentence.replace(subject["word"], f" @ * {subject['type']} * {subject['word']} @ ")
         sentence = sentence.replace(object["word"], f" # ^ {object['type']} ^ {object['word']} # ")
 
