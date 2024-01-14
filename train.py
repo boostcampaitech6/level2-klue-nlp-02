@@ -30,7 +30,7 @@ def train(configs):
             "epochs": configs["train"]["max_epoch"],
         },
     )
-    run_name = f"{configs['model']['model_name']}_{configs['train']['batch_size']}_{configs['train']['max_epoch']}_{configs['train']['learning_rate']}"
+    run_name = f"{configs['model']['model_name']}_{configs['train']['batch_size']}_{configs['train']['max_epoch']}_{configs['train']['learning_rate']}_focal"
     wandb.run.name = run_name
     wandb.run.save()
 
@@ -66,7 +66,7 @@ def train(configs):
 
     # 모델 불러오기
     model = get_model(MODEL_NAME, device)
-    model.resize_token_embeddings(len(tokenizer))
+    # model.resize_token_embeddings(len(tokenizer))
 
     print(model.config)
 

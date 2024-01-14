@@ -22,7 +22,7 @@ model:
 parameters:
   model_name:
     values:
-      ['gogamza/kobart-base-v2']
+      ['kakaobank/kf-deberta-base']
   seed:
     values: [42]
   learning_rate:

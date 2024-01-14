@@ -13,14 +13,14 @@ model:
     save_steps: 1000
 
 train:
-    learning_rate: 1e-5
-    batch_size: 16
+    learning_rate: 5e-5
+    batch_size: 32
     max_epoch: 3
     warmup_steps: 500
     weight_decay: 0.01
     evaluation_strategy: steps
     eval_steps: 1000
-    loss_function: CE
+    loss_function: FocalLoss
 
 log:
     logging_dir: ./logs

@@ -69,16 +69,13 @@ def tokenized_dataset(dataset, tokenizer):
 
     for e01, e02 in zip(dataset["subject_entity"], dataset["object_entity"]):
         temp = ""
-        temp = e01 + "[SEP]" + e02
+        if tokenizer.sep_token:
+            temp = e01 + "[SEP]" + e02
+        else:
+            temp = e01 + "</s>" + e02
         concat_entity.append(temp)
 
     sen = list(dataset["sentence"])
-
-    if not tokenizer.sep_token:
-        new_special_token = "[SEP]"
-        tokenizer.add_special_tokens({"sep_token": new_special_token})
-
-        create_token_type_ids(tokenizer, concat_entity, sen)
 
     tokenized_sentences = tokenizer(
         concat_entity,
