@@ -65,6 +65,7 @@ def tokenized_dataset(dataset, tokenizer, method):
     """tokenizer에 따라 sentence를 tokenizing 합니다."""
     concat_entity = []
     token_type_ids = False if "bart" in tokenizer.name_or_path else True  # token_type_ids를 리턴할지 말지
+    seperator_token = "</s>" if "bart" in tokenizer.name_or_path else "[SEP]"
 
     for e01, e02, t01, t02 in zip(
         dataset["subject_entity"], dataset["object_entity"], dataset["subject_type"], dataset["object_type"]
@@ -88,20 +89,18 @@ def tokenized_dataset(dataset, tokenizer, method):
         elif method == "test1":
             temp = f" @ * {t01} * {e01} @ # ^ {t02} ^ {e02} # 는 무슨 관계?"
 
+        # elif method == "test2":
+        #     temp = f" 에서 @ * {t01} * {e01} @ 와 # ^ {t02} ^ {e02} # 는 무슨 관계?"
+
         elif method == "test2":
-            temp = f" 에서 @ * {t01} * {e01} @ 와 # ^ {t02} ^ {e02} # 는 무슨 관계?"
+            temp = f" 에서 @ * {t01} * {e01} @ 와(과) # ^ {t02} ^ {e02} # 는(은) 무슨 관계?"
 
         else:
-            # to identify whether the tokenizer is BERT-based or BART-based
-            if "bart" in tokenizer.name_or_path:
-                temp = e01 + "</s>" + e02
-
-            elif "bert" in tokenizer.name_or_path:
-                temp = e01 + "[SEP]" + e02
+            temp = e01 + seperator_token + e02
 
         concat_entity.append(temp)
 
-    if method == "test" or method == "test1" or method == "test2":
+    if method == "test" or method == "test2":
         tokenized_sentences = tokenizer(
             list(dataset["sentence"]),
             concat_entity,
