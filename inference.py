@@ -67,7 +67,7 @@ def predict(configs):
     model = get_model(f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}", device)
 
     # load test datset
-    test_id, Re_test_dataset = load_test_dataset(predict_path, tokenizer)
+    test_id, Re_test_dataset = load_test_dataset(predict_path, tokenizer, "tem_punt_question")
 
     # predict answer
     pred_answer, output_prob = inference(model, Re_test_dataset, batch_size, device)  # model에서 class 추론
