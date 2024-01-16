@@ -1,11 +1,11 @@
 import re
 
 import torch
-import wandb
 import yaml
 from transformers import AutoTokenizer, TrainingArguments
 from transformers.integrations import WandbCallback
 
+import wandb
 from dataset.load_data import load_and_process_dataset_for_train
 from trainer.trainer import NewTrainer
 from utils.compute_metrics import compute_metrics
@@ -21,6 +21,8 @@ def train(configs):
     train_path = configs["data"]["train_path"]
     dev_path = configs["data"]["dev_path"]
     output_path = configs["data"]["output_path"]
+
+    seed = configs["seed"]
 
     MODEL_NAME = configs["model"]["model_name"]
     saved_name = re.sub("/", "_", MODEL_NAME)
@@ -88,12 +90,12 @@ def train(configs):
 
     # train model
     trainer.train()
-    model.save_pretrained(f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}")
+    model.save_pretrained(f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}_{seed}")
 
 
 def main(configs):
     wandb.login()
-    run_name = f"{configs['model']['model_name']}_{configs['train']['batch_size']}_{configs['train']['max_epoch']}_{configs['train']['learning_rate']}"
+    run_name = f"{configs['model']['model_name']}_{configs['train']['batch_size']}_{configs['train']['max_epoch']}_{configs['train']['learning_rate']}_{configs['seed']}"
     wandb.init(project="your_project_name", entity="dunning-kruger-klue", name=run_name)
     train(configs)
 

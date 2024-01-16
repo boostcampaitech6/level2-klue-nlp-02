@@ -1,11 +1,11 @@
 import re
 
 import torch
-import wandb
 import yaml
 from transformers import AutoTokenizer, TrainingArguments
 from transformers.integrations import WandbCallback
 
+import wandb
 from dataset.load_data import load_and_process_dataset_for_train
 from trainer.trainer import NewTrainer
 from utils.compute_metrics import compute_metrics
@@ -21,6 +21,7 @@ def train(configs):
     train_path = configs["data"]["train_path"]
     dev_path = configs["data"]["dev_path"]
     output_path = configs["data"]["output_path"]
+    seed = configs["parameters"]["seed"]
 
     MODEL_NAME = wandb.run.config["model_name"]
     saved_name = re.sub("/", "_", MODEL_NAME)
@@ -87,13 +88,13 @@ def train(configs):
 
     # train model
     trainer.train()
-    model.save_pretrained(f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}")
+    model.save_pretrained(f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}_{seed}")
 
 
 def main(configs):
     wandb.login()
     wandb.init(config=configs)
-    run_name = f"{wandb.run.config['model_name']}_{wandb.run.config['batch_size']}_{wandb.run.config['max_epoch']}_{wandb.run.config['learning_rate']}_{wandb.run.config['loss_function']}"
+    run_name = f"{wandb.run.config['model_name']}_{wandb.run.config['batch_size']}_{wandb.run.config['max_epoch']}_{wandb.run.config['learning_rate']}_{wandb.run.config['loss_function']}_{wandb.run.config['seed']}"
     wandb.run.name = run_name
     train(configs)
 

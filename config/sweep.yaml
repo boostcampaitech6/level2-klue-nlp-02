@@ -9,11 +9,11 @@ metric:
 
 
 data:
-    output_path: ./best_model/
-    train_path: ./data/train_dist_1.csv
-    dev_path: ./data/dev_dist_1.csv
-    predict_path: ./data/test.csv
-    submission_path: ./prediction/
+    output_path: /data/ephemeral/level2-klue-nlp-02/best_model/
+    train_path: /data/ephemeral/dataset/train/train_dist_1.csv
+    dev_path: /data/ephemeral/dataset/train/dev_dist_1.csv
+    predict_path: /data/ephemeral/dataset/test/test_data.csv
+    submission_path: /data/ephemeral/level2-klue-nlp-02/prediction/
 
 model:
     save_total_limit: 1
@@ -22,20 +22,20 @@ model:
 parameters:
   model_name:
     values:
-      'klue/roberta-large'
+      ['klue/roberta-large']
   seed:
     values: [42]
   learning_rate:
     values: [1e-5,3e-5,5e-5]
   batch_size:
-    values: [32]
+    values: [32,48]
   max_epoch:
-    values: [20]
+    values: [3]
   warmup_steps:
     value:
       500
   weight_decay: 
-    value: 0.01
+    value: [0, 0.1, 0.001, 0.0001, 0.00001]
   evaluation_strategy:
     value: 'steps'
   eval_steps:
