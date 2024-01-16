@@ -22,10 +22,11 @@ class RE_Dataset(torch.utils.data.Dataset):
         return len(self.labels)
 
 
-def preprocessing_dataset(dataset, method):
+def preprocessing_dataset(dataset, method: str = "tem_punt_question"):
     """처음 불러온 csv 파일을 원하는 형태의 DataFrame으로 변경 시켜줍니다."""
     subject_entity = []
     object_entity = []
+
     subject_type = []
     object_type = []
     sents = []
@@ -53,7 +54,7 @@ def preprocessing_dataset(dataset, method):
     return out_dataset
 
 
-def load_data(dataset_dir, method):
+def load_data(dataset_dir, method: str = "tem_punt_question"):
     """csv 파일을 경로에 맡게 불러 옵니다."""
     pd_dataset = pd.read_csv(dataset_dir)
     dataset = preprocessing_dataset(pd_dataset, method)
@@ -61,7 +62,7 @@ def load_data(dataset_dir, method):
     return dataset
 
 
-def tokenized_dataset(dataset, tokenizer, method):
+def tokenized_dataset(dataset, tokenizer, method: str = "tem_punt_question"):
     """tokenizer에 따라 sentence를 tokenizing 합니다."""
     concat_entity = []
 
@@ -81,10 +82,10 @@ def tokenized_dataset(dataset, tokenizer, method):
             # # ^ PER ^ 조지 해리슨 #이 쓰고
             temp = f" @ * {t01} * {e01} @ # ^ {t02} ^ {e02} # "
 
-        elif method == "test":
-            temp = f" 에서 {e01} 과 {e02} 는 무슨 관계?"
+        elif method == "tem_punt_question":  # typed_entity_marker (punt) + 뒤에 질문
+            temp = f" 에서 @ * {t01} * {e01} @ 와(과) # ^ {t02} ^ {e02} # 는(은) 무슨 관계?"
 
-        elif method == "test1":
+        elif method == "question_first_tem_punt":  # 앞에 질문 + typed_entity_marker (punt)
             temp = f" @ * {t01} * {e01} @ # ^ {t02} ^ {e02} # 는 무슨 관계?"
 
         else:
@@ -92,7 +93,7 @@ def tokenized_dataset(dataset, tokenizer, method):
 
         concat_entity.append(temp)
 
-    if method == "test":
+    if method == "tem_punt_question":
         tokenized_sentences = tokenizer(
             list(dataset["sentence"]),
             concat_entity,
@@ -117,7 +118,7 @@ def tokenized_dataset(dataset, tokenizer, method):
     return tokenized_sentences
 
 
-def load_and_process_dataset_for_train(file_path, tokenizer, method):
+def load_and_process_dataset_for_train(file_path, tokenizer, method: str = "tem_punt_question"):
     # load dataset
     dataset = load_data(file_path, method)
     labels = label_to_num(dataset["label"].values)
@@ -129,7 +130,7 @@ def load_and_process_dataset_for_train(file_path, tokenizer, method):
     return RE_Dataset(tokenized_data, labels)
 
 
-def load_test_dataset(dataset_dir, tokenizer, method):
+def load_test_dataset(dataset_dir, tokenizer, method: str = "tem_punt_question"):
     """
     test dataset을 불러온 후,
     tokenizing 하고, RE_Dateset 객체 생성
@@ -143,21 +144,69 @@ def load_test_dataset(dataset_dir, tokenizer, method):
 
 
 def make_sentence_mark(method, sentence, subject, object):
-    print(method)
-    if method == "em2":  # entity_marker_2
-        sentence = sentence.replace(subject["word"], f"[{subject['type']}]{subject['word']}[/{subject['type']}")
-        sentence = sentence.replace(object["word"], f"[{object['type']}]{object['word']}[/{object['type']}]")
+    if subject["end_idx"] < object["start_idx"]:
+        # subject가 앞, object가 뒤
+        first = sentence[: subject["start_idx"]]
+        middle = sentence[subject["end_idx"] + 1 : object["start_idx"]]
+        last = sentence[object["end_idx"] + 1 :]
 
-    elif method == "tem":  # typed_entity_marker
-        sentence = sentence.replace(subject["word"], f"<S:{subject['type']}> {subject['word']} </S:{subject['type']}>")
-        sentence = sentence.replace(object["word"], f"<O:{object['type']}> {object['word']} </O:{object['type']}>")
+        sub_word = sentence[subject["start_idx"] : subject["end_idx"] + 1]
+        obj_word = sentence[object["start_idx"] : object["end_idx"] + 1]
 
-    elif method == "tem_punt" or method == "test" or method == "test1":  # typed_entity_marker (punt)
-        sentence = sentence.replace(subject["word"], f" @ * {subject['type']} * {subject['word']} @ ")
-        sentence = sentence.replace(object["word"], f" # ^ {object['type']} ^ {object['word']} # ")
+        if method == "em2":  # entity_marker_2
+            sub_word = f"[{subject['type']}]" + sub_word + f"[/{subject['type']}]"
+            obj_word = f"[{object['type']}]" + obj_word + f"[/{object['type']}]"
+
+            return first + sub_word + middle + obj_word + last
+
+        elif method == "tem":  # typed_entity_marker
+            sub_word = f"<S:{subject['type']}> " + sub_word + f" </S:{subject['type']}>"
+            obj_word = f"<O:{object['type']}> " + obj_word + f" </O:{object['type']}>"
+
+            return first + sub_word + middle + obj_word + last
+
+        elif (
+            method == "tem_punt" or method == "tem_punt_question" or method == "question_first_tem_punt"
+        ):  # typed_entity_marker (punt)
+            sub_word = f" @ * {subject['type']} * " + sub_word + " @ "
+            obj_word = f" # ^ {object['type']} ^ " + obj_word + " # "
+
+            return first + sub_word + middle + obj_word + last
+
+        else:
+            pass
 
     else:
-        pass
+        # object가 앞, subject가 뒤
+        first = sentence[: object["start_idx"]]
+        middle = sentence[object["end_idx"] + 1 : subject["start_idx"]]
+        last = sentence[subject["end_idx"] + 1 :]
+
+        sub_word = sentence[subject["start_idx"] : subject["end_idx"] + 1]
+        obj_word = sentence[object["start_idx"] : object["end_idx"] + 1]
+
+        if method == "em2":  # entity_marker_2
+            sub_word = f"[{subject['type']}]" + sub_word + f"[/{subject['type']}]"
+            obj_word = f"[{object['type']}]" + obj_word + f"[/{object['type']}]"
+
+            return first + obj_word + middle + sub_word + last
+
+        elif method == "tem":  # typed_entity_marker
+            sub_word = f"<S:{subject['type']}> " + sub_word + f" </S:{subject['type']}>"
+            obj_word = f"<O:{object['type']}> " + obj_word + f" </O:{object['type']}>"
+
+            return first + obj_word + middle + sub_word + last
+
+        elif (
+            method == "tem_punt" or method == "tem_punt_question" or method == "question_first_tem_punt"
+        ):  # typed_entity_marker (punt)
+            sub_word = f" @ * {subject['type']} * " + sub_word + " @ "
+            obj_word = f" # ^ {object['type']} ^ " + obj_word + " # "
+
+            return first + obj_word + middle + sub_word + last
+
+        else:
+            pass
 
     return sentence
 
