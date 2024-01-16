@@ -39,15 +39,26 @@ def train(configs):
     logging_steps = configs["log"]["logging_steps"]
 
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    tokenizer.add_special_tokens = {
+        "entity" : [
+            "[ORG]", "[PER]", "[POH]", "[DAT]", "[LOC]", "[NOH]",
+            "[/ORG]", "[/PER]", "[/POH]", "[/DAT]", "[/LOC]", "[/NOH]",
+            "<S:ORG>", "<S:PER>", "<S:POH>", "<S:DAT>", "<S:LOC>", "<S:NOH>",
+            "</S:ORG>", "</S:PER>", "</S:POH>", "</S:DAT>", "</S:LOC>", "</S:NOH>",
+            "<O:ORG>", "<O:PER>", "<O:POH>", "<O:DAT>", "<O:LOC>", "<O:NOH>",
+            "</O:ORG>", "</O:PER>", "</O:POH>", "</O:DAT>", "</O:LOC>", "</O:NOH>",
+                    ]
+    }
 
-    train_dataset = load_and_process_dataset_for_train(train_path, tokenizer)
-    dev_dataset = load_and_process_dataset_for_train(dev_path, tokenizer)
+    train_dataset = load_and_process_dataset_for_train(train_path, tokenizer, "tem_punt_question")
+    dev_dataset = load_and_process_dataset_for_train(dev_path, tokenizer, "tem_punt_question")
 
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print(device)
 
     # 모델 불러오기
     model = get_model(MODEL_NAME, device)
+    model.resize_token_embeddings(len(tokenizer))
 
     print(model.config)
 
