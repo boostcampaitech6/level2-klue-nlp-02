@@ -17,23 +17,6 @@ def train(configs):
     # 시드 고정
     set_seed(configs["seed"])
 
-    wandb.init(
-        # set the wandb project where this run will be logged
-        project=configs["wandb_params"]["project"],
-        entity=configs["wandb_params"]["entity"],
-        allow_val_change=True,
-        # track hyperparameters and run metadata
-        config={
-            "learning_rate": float(configs["train"]["learning_rate"]),
-            "model": configs["model"]["model_name"],
-            "dataset": configs["wandb_params"]["dataset"],
-            "epochs": configs["train"]["max_epoch"],
-        },
-    )
-    run_name = f"{configs['model']['model_name']}_{configs['train']['batch_size']}_{configs['train']['max_epoch']}_{configs['train']['learning_rate']}_test2"
-    wandb.run.name = run_name
-    wandb.run.save()
-
     # 가독성을 위한 컨픽 지정
     entity_method = configs["preprocessing"]["entity_method"]
 
@@ -108,12 +91,15 @@ def train(configs):
 
     # train model
     trainer.train()
-    model.save_pretrained(f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}_test2")
+    model.save_pretrained(
+        f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}_{weight_decay}"
+    )
 
 
 def main(configs):
-    # wandb.login()
-    # wandb.init(project="dayeon", entity="dunning-kruger-klue", name=run_name)
+    wandb.login()
+    run_name = f"{configs['model']['model_name']}_{configs['train']['batch_size']}_{configs['train']['max_epoch']}_{configs['train']['learning_rate']}_{configs['train']['loss_function']}_{configs['train']['weight_decay']}"
+    wandb.init(project="dayeon", entity="dunning-kruger-klue", name=run_name)
     train(configs)
 
 

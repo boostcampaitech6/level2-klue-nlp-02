@@ -59,6 +59,7 @@ def predict(configs):
     batch_size = configs["train"]["batch_size"]
     max_epoch = configs["train"]["max_epoch"]
     loss_function = configs["train"]["loss_function"]
+    weight_decay = float(configs["train"]["weight_decay"])
 
     """
     주어진 dataset csv 파일과 같은 형태일 경우 inference 가능한 코드입니다.
@@ -69,7 +70,7 @@ def predict(configs):
 
     # load my model
     model = get_model(
-        f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}_test2", device
+        f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}_{weight_decay}", device
     )
 
     # load test datset
@@ -91,7 +92,8 @@ def predict(configs):
     )
 
     output.to_csv(
-        f"{submission_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}_test2.csv", index=False
+        f"{submission_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}_{weight_decay}.csv",
+        index=False,
     )  # 최종적으로 완성된 예측한 라벨 csv 파일 형태로 저장.
     # 필수!!
     print("---- Finish! ----")

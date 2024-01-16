@@ -11,14 +11,14 @@ data:
     submission_path: ./prediction/
 
 model:
-    model_name: kakaobank/kf-deberta-base
+    model_name: xlm-roberta-large
     save_total_limit: 5
     save_steps: 1000
 
 train:
     learning_rate: 5e-5
     batch_size: 32
-    max_epoch: 3
+    max_epoch: 10
     warmup_steps: 500
     weight_decay: 0.01
     evaluation_strategy: steps

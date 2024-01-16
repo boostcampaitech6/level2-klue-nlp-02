@@ -89,13 +89,15 @@ def train(configs):
 
     # train model
     trainer.train()
-    model.save_pretrained(f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}")
+    model.save_pretrained(
+        f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}_{weight_decay}"
+    )
 
 
 def main(configs):
     wandb.login()
     wandb.init(config=configs)
-    run_name = f"{wandb.run.config['model_name']}_{wandb.run.config['batch_size']}_{wandb.run.config['max_epoch']}_{wandb.run.config['learning_rate']}_{wandb.run.config['loss_function']}"
+    run_name = f"{wandb.run.config['model_name']}_{wandb.run.config['batch_size']}_{wandb.run.config['max_epoch']}_{wandb.run.config['learning_rate']}_{wandb.run.config['loss_function']}_{wandb.run.config['weight_decay']}"
     wandb.run.name = run_name
     train(configs)
 
