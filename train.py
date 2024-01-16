@@ -42,6 +42,46 @@ def train(configs):
     logging_steps = configs["log"]["logging_steps"]
 
     tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
+    tokenizer.add_special_tokens = {
+        "entity": [
+            "[ORG]",
+            "[PER]",
+            "[POH]",
+            "[DAT]",
+            "[LOC]",
+            "[NOH]",
+            "[/ORG]",
+            "[/PER]",
+            "[/POH]",
+            "[/DAT]",
+            "[/LOC]",
+            "[/NOH]",
+            "<S:ORG>",
+            "<S:PER>",
+            "<S:POH>",
+            "<S:DAT>",
+            "<S:LOC>",
+            "<S:NOH>",
+            "</S:ORG>",
+            "</S:PER>",
+            "</S:POH>",
+            "</S:DAT>",
+            "</S:LOC>",
+            "</S:NOH>",
+            "<O:ORG>",
+            "<O:PER>",
+            "<O:POH>",
+            "<O:DAT>",
+            "<O:LOC>",
+            "<O:NOH>",
+            "</O:ORG>",
+            "</O:PER>",
+            "</O:POH>",
+            "</O:DAT>",
+            "</O:LOC>",
+            "</O:NOH>",
+        ]
+    }
 
     train_dataset = load_and_process_dataset_for_train(train_path, tokenizer, entity_method)
     dev_dataset = load_and_process_dataset_for_train(dev_path, tokenizer, entity_method)
@@ -51,8 +91,7 @@ def train(configs):
 
     # 모델 불러오기
     model = get_model(MODEL_NAME, device)
-    # model.resize_token_embeddings(len(tokenizer))
-
+    model.resize_token_embeddings(len(tokenizer))
     print(model.config)
 
     # 사용한 option 외에도 다양한 option들이 있습니다.

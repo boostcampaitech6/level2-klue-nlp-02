@@ -1,7 +1,7 @@
 seed: 42
 
 preprocessing:
-    entity_method: test2
+    entity_method: tem_punt_question
 
 data:
     output_path: ./best_model/
