@@ -144,69 +144,20 @@ def load_test_dataset(dataset_dir, tokenizer, method: str = "tem_punt_question")
 
 
 def make_sentence_mark(method, sentence, subject, object):
-    if subject["end_idx"] < object["start_idx"]:
-        # subject가 앞, object가 뒤
-        first = sentence[: subject["start_idx"]]
-        middle = sentence[subject["end_idx"] + 1 : object["start_idx"]]
-        last = sentence[object["end_idx"] + 1 :]
+    if method == "em2":  # entity_marker_2
+        sentence = sentence.replace(subject["word"], f"[{subject['type']}]{subject['word']}[/{subject['type']}")
+        sentence = sentence.replace(object["word"], f"[{object['type']}]{object['word']}[/{object['type']}]")
 
-        sub_word = sentence[subject["start_idx"] : subject["end_idx"] + 1]
-        obj_word = sentence[object["start_idx"] : object["end_idx"] + 1]
+    elif method == "tem":  # typed_entity_marker
+        sentence = sentence.replace(subject["word"], f"<S:{subject['type']}> {subject['word']} </S:{subject['type']}>")
+        sentence = sentence.replace(object["word"], f"<O:{object['type']}> {object['word']} </O:{object['type']}>")
 
-        if method == "em2":  # entity_marker_2
-            sub_word = f"[{subject['type']}]" + sub_word + f"[/{subject['type']}]"
-            obj_word = f"[{object['type']}]" + obj_word + f"[/{object['type']}]"
-
-            return first + sub_word + middle + obj_word + last
-
-        elif method == "tem":  # typed_entity_marker
-            sub_word = f"<S:{subject['type']}> " + sub_word + f" </S:{subject['type']}>"
-            obj_word = f"<O:{object['type']}> " + obj_word + f" </O:{object['type']}>"
-
-            return first + sub_word + middle + obj_word + last
-
-        elif (
-            method == "tem_punt" or method == "tem_punt_question" or method == "question_first_tem_punt"
-        ):  # typed_entity_marker (punt)
-            sub_word = f" @ * {subject['type']} * " + sub_word + " @ "
-            obj_word = f" # ^ {object['type']} ^ " + obj_word + " # "
-
-            return first + sub_word + middle + obj_word + last
-
-        else:
-            pass
+    elif method == "tem_punt" or method == "tem_punt_question" or method == "question_first_tem_punt":  # typed_entity_marker (punt)
+        sentence = sentence.replace(subject["word"], f" @ * {subject['type']} * {subject['word']} @ ")
+        sentence = sentence.replace(object["word"], f" # ^ {object['type']} ^ {object['word']} # ")
 
     else:
-        # object가 앞, subject가 뒤
-        first = sentence[: object["start_idx"]]
-        middle = sentence[object["end_idx"] + 1 : subject["start_idx"]]
-        last = sentence[subject["end_idx"] + 1 :]
-
-        sub_word = sentence[subject["start_idx"] : subject["end_idx"] + 1]
-        obj_word = sentence[object["start_idx"] : object["end_idx"] + 1]
-
-        if method == "em2":  # entity_marker_2
-            sub_word = f"[{subject['type']}]" + sub_word + f"[/{subject['type']}]"
-            obj_word = f"[{object['type']}]" + obj_word + f"[/{object['type']}]"
-
-            return first + obj_word + middle + sub_word + last
-
-        elif method == "tem":  # typed_entity_marker
-            sub_word = f"<S:{subject['type']}> " + sub_word + f" </S:{subject['type']}>"
-            obj_word = f"<O:{object['type']}> " + obj_word + f" </O:{object['type']}>"
-
-            return first + obj_word + middle + sub_word + last
-
-        elif (
-            method == "tem_punt" or method == "tem_punt_question" or method == "question_first_tem_punt"
-        ):  # typed_entity_marker (punt)
-            sub_word = f" @ * {subject['type']} * " + sub_word + " @ "
-            obj_word = f" # ^ {object['type']} ^ " + obj_word + " # "
-
-            return first + obj_word + middle + sub_word + last
-
-        else:
-            pass
+        pass
 
     return sentence
 
