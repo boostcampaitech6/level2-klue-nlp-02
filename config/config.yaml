@@ -1,0 +1,38 @@
+seed: 42
+
+preprocessing:
+    entity_method: test1
+
+data:
+    output_path: /data/ephemeral/00_git_file/best_model
+    train_path: /data/ephemeral/00_git_file/dataset/__train_dist_1.csv
+    dev_path: /data/ephemeral/00_git_file/dataset/__dev_dist_1.csv
+    predict_path: /data/ephemeral/dataset/test/test_data.csv
+    submission_path: /data/ephemeral/00_git_file/prediction
+
+model:
+    model_name: xlm-roberta-large
+    save_toyatal_limit: 5
+    save_steps: 500
+
+train:
+    learning_rate: 3e-5
+    batch_size: 48
+    max_epoch: 3
+    warmup_steps: 500
+    weight_decay: 0.01
+    evaluation_strategy: steps
+    eval_steps: 500
+    gamma : 0
+    loss_function: FocalLoss
+
+log:
+    logging_dir: ./logs
+    logging_steps: 100
+
+
+wandb_params:
+    project: 'yum'
+    entity: 'dunning-kruger-klue'
+    allow_val_change: True
+    dataset: 'dist_1_prep'
