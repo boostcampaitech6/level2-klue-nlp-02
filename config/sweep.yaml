@@ -8,6 +8,9 @@ metric:
   name: eval/micro f1 score
 
 
+preprocessing:
+    entity_method: tem_punt_question
+
 data:
     output_path: /data/ephemeral/level2-klue-nlp-02/best_model/
     train_path: /data/ephemeral/dataset/train/train_dist_1.csv
@@ -22,28 +25,33 @@ model:
 parameters:
   model_name:
     values:
-      ['klue/roberta-large']
+      ['team-lucid/deberta-v3-xlarge-korean']
   seed:
     values: [42]
   learning_rate:
-    values: [1e-5,3e-5,5e-5]
+    value: 3e-5
   batch_size:
-    values: [32,48]
+    values: [8]
   max_epoch:
     values: [3]
   warmup_steps:
     value:
       500
   weight_decay: 
-    value: [0, 0.1, 0.001, 0.0001, 0.00001]
+    values: [0.01,0.1]
   evaluation_strategy:
     value: 'steps'
   eval_steps:
     value: 1000
+  gamma :
+    values: [0.5,2]
   loss_function:
     value: 'FocalLoss'
+  # method:
+  #   values: ['tem_punt','tem_punt_question','question_first_tem_punt']
 
 log:
     logging_dir: ./logs
     logging_steps: 100
+
 
