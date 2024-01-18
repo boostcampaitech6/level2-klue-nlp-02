@@ -19,7 +19,7 @@ class NewTrainer(Trainer):
         if self.loss_fn == "CE":
             loss_function = nn.CrossEntropyLoss()
         elif self.loss_fn == "FocalLoss":
-            loss_function = loss_fn("FocalLoss")
+            loss_function = loss_fn("FocalLoss", self.gamma)
 
         loss = loss_function(logits, labels)
 
