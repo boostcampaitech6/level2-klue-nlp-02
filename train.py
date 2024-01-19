@@ -17,6 +17,10 @@ def train(configs):
     # 시드 고정
     set_seed(configs["seed"])
 
+    wandb.login()
+    run_name = f"{configs['model']['model_name']}_{configs['train']['batch_size']}_{configs['train']['max_epoch']}_{configs['train']['learning_rate']}_{configs['train']['loss_function']}_{configs['train']['weight_decay']}_{configs['preprocessing']['entity_method']}_{configs['train']['gamma']}_{configs['train']['alpha']}"
+    wandb.init(project="dayeon", entity="klue2-dk", name=run_name)
+
     # 가독성을 위한 컨픽 지정
     entity_method = configs["preprocessing"]["entity_method"]
 
@@ -37,6 +41,8 @@ def train(configs):
     evaluation_strategy = configs["train"]["evaluation_strategy"]
     eval_steps = configs["train"]["eval_steps"]
     loss_function = configs["train"]["loss_function"]
+    gamma = configs["train"]["gamma"]
+    alpha = configs["train"]["alpha"]
 
     logging_dir = configs["log"]["logging_dir"]
     logging_steps = configs["log"]["logging_steps"]
@@ -125,20 +131,19 @@ def train(configs):
         eval_dataset=dev_dataset,  # evaluation dataset
         loss_fn=loss_function,  # loss function customizing
         compute_metrics=compute_metrics,  # define metrics function
+        gamma=gamma,
+        alpha=alpha,
         callbacks=[WandbCallback()],
     )
 
     # train model
     trainer.train()
     model.save_pretrained(
-        f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}_{weight_decay}"
+        f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}_{weight_decay}_{entity_method}_{gamma}_{alpha}"
     )
 
 
 def main(configs):
-    wandb.login()
-    run_name = f"{configs['model']['model_name']}_{configs['train']['batch_size']}_{configs['train']['max_epoch']}_{configs['train']['learning_rate']}_{configs['train']['loss_function']}_{configs['train']['weight_decay']}"
-    wandb.init(project="dayeon", entity="dunning-kruger-klue", name=run_name)
     train(configs)
 
 

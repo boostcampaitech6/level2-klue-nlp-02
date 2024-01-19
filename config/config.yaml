@@ -11,26 +11,22 @@ data:
     submission_path: ./prediction/
 
 model:
-    model_name: xlm-roberta-large
+    model_name: ainize/klue-bert-base-re
     save_total_limit: 5
     save_steps: 1000
 
 train:
     learning_rate: 5e-5
     batch_size: 32
-    max_epoch: 10
+    max_epoch: 3
     warmup_steps: 500
     weight_decay: 0.01
     evaluation_strategy: steps
     eval_steps: 1000
     loss_function: FocalLoss
+    gamma: 0
+    alpha: None
 
 log:
     logging_dir: ./logs
     logging_steps: 100
-
-wandb_params:
-    project: 'dayeon'
-    entity: 'dunning-kruger-klue'
-    allow_val_change: True
-    dataset: 'dist_1'

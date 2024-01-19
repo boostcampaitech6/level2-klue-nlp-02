@@ -18,8 +18,6 @@ def train(configs):
     set_seed(wandb.run.config["seed"])
 
     # 가독성을 위한 컨픽 지정
-    entity_method = configs["preprocessing"]["entity_method"]
-
     train_path = configs["data"]["train_path"]
     dev_path = configs["data"]["dev_path"]
     output_path = configs["data"]["output_path"]
@@ -36,6 +34,9 @@ def train(configs):
     evaluation_strategy = wandb.run.config["evaluation_strategy"]
     eval_steps = wandb.run.config["eval_steps"]
     loss_function = wandb.run.config["loss_function"]
+    entity_method = wandb.run.config["entity_method"]
+    gamma = wandb.run.config["gamma"]
+    alpha = wandb.run.config["alpha"]
 
     logging_dir = configs["log"]["logging_dir"]
     logging_steps = configs["log"]["logging_steps"]
@@ -125,20 +126,22 @@ def train(configs):
         eval_dataset=dev_dataset,  # evaluation dataset
         loss_fn=loss_function,  # loss function customizing
         compute_metrics=compute_metrics,  # define metrics function
+        gamma=gamma,
+        alpha=alpha,
         callbacks=[WandbCallback()],
     )
 
     # train model
     trainer.train()
     model.save_pretrained(
-        f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}_{weight_decay}"
+        f"{output_path}{saved_name}_{batch_size}_{max_epoch}_{learning_rate}_{loss_function}_{weight_decay}_{entity_method}_{gamma}_{alpha}"
     )
 
 
 def main(configs):
     wandb.login()
     wandb.init(config=configs)
-    run_name = f"{wandb.run.config['model_name']}_{wandb.run.config['batch_size']}_{wandb.run.config['max_epoch']}_{wandb.run.config['learning_rate']}_{wandb.run.config['loss_function']}_{wandb.run.config['weight_decay']}"
+    run_name = f"{wandb.run.config['model_name']}_{wandb.run.config['batch_size']}_{wandb.run.config['max_epoch']}_{wandb.run.config['learning_rate']}_{wandb.run.config['loss_function']}_{wandb.run.config['weight_decay']}_{wandb.run.config['entity_method']}_{wandb.run.config['gamma']}_{wandb.run.config['alpha']}"
     wandb.run.name = run_name
     train(configs)
 

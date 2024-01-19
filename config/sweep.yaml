@@ -1,6 +1,6 @@
 program: sweep.py
 name: for_metric
-entity: dunning-kruger-klue
+entity: klue2-dk
 project: dayeon
 method: grid
 metric:
@@ -8,13 +8,10 @@ metric:
   name: eval/micro f1 score
 
 
-preprocessing:
-    entity_method: test2
-
 data:
     output_path: ./best_model/
-    train_path: ./data/train_dist_3.csv
-    dev_path: ./data/dev_dist_3.csv
+    train_path: ./data/train_dist_1.csv
+    dev_path: ./data/dev_dist_1.csv
     predict_path: ./data/test.csv
     submission_path: ./prediction/
 
@@ -25,26 +22,32 @@ model:
 parameters:
   model_name:
     values:
-      ['kakaobank/kf-deberta-base']
+      ['ainize/klue-bert-base-re']
   seed:
     values: [42]
   learning_rate:
-    values: [5e-5]
+    values: [3e-5, 5e-5]
   batch_size:
-    values: [32]
+    values: [48]
   max_epoch:
     values: [3]
   warmup_steps:
     value:
       500
   weight_decay: 
-    values: [0, 0.1, 0.01, 0.001, 0.0001, 0.00001]
+    values: [0.1, 0.01]
   evaluation_strategy:
     value: 'steps'
   eval_steps:
     value: 1000
   loss_function:
     value: 'FocalLoss'
+  entity_method: 
+    values: ['tem_punt']
+  gamma:
+    values: [0]
+  alpha:
+    value: 0
 
 log:
     logging_dir: ./logs
