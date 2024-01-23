@@ -27,14 +27,14 @@
 
 |구다연[<img src="img/github-mark.png" width="20" style="vertical-align:middle;">](https://github.com/9ooDa)|김동현[<img src="img/github-mark.png" width="20" style="vertical-align:middle;">](https://github.com/valofosho)|김유민[<img src="img/github-mark.png" width="20" style="vertical-align:middle;">](https://github.com/miniminii)|김희범[<img src="img/github-mark.png" width="20" style="vertical-align:middle;">](https://github.com/C7C4FF)|이민아[<img src="img/github-mark.png" width="20" style="vertical-align:middle;">](https://github.com/minari1505)|이지인[<img src="img/github-mark.png" width="20" style="vertical-align:middle;">](https://github.com/Boribori12)|
 |:--:|:--:|:--:|:--:|:--:|:--:|
-|![다연](https://github.com/boostcampaitech6/level2-klue-nlp-02/assets/58420112/8e952c33-468e-46a8-979d-512057ad364e)|![동현](https://github.com/boostcampaitech6/level2-klue-nlp-02/assets/58420112/51f6e386-e1d8-4ae6-ae7d-2d6480dd3b80)|![유민](https://github.com/boostcampaitech6/level2-klue-nlp-02/assets/58420112/5d9ff58b-f0a7-4945-9984-5ab311795395)|![희범](https://github.com/boostcampaitech6/level2-klue-nlp-02/assets/58420112/75d58975-28a6-4d2d-8c53-f9222d98fa87)|![민아](https://github.com/boostcampaitech6/level2-klue-nlp-02/assets/58420112/0d83ae8a-218b-466c-b957-7ac93c32e3b0)|![Alt text](./markdownimg/image-7.png)|
+|![다연](https://github.com/boostcampaitech6/level2-klue-nlp-02/assets/58420112/8e952c33-468e-46a8-979d-512057ad364e)|![동현](https://github.com/boostcampaitech6/level2-klue-nlp-02/assets/58420112/51f6e386-e1d8-4ae6-ae7d-2d6480dd3b80)|![유민](https://github.com/boostcampaitech6/level2-klue-nlp-02/assets/58420112/5d9ff58b-f0a7-4945-9984-5ab311795395)|![희범](https://github.com/boostcampaitech6/level2-klue-nlp-02/assets/58420112/75d58975-28a6-4d2d-8c53-f9222d98fa87)|![민아](https://github.com/boostcampaitech6/level2-klue-nlp-02/assets/58420112/0d83ae8a-218b-466c-b957-7ac93c32e3b0)|![지인](https://github.com/boostcampaitech6/level2-klue-nlp-02/assets/58420112/949b61d0-b2dd-4b2d-a3f5-968241d0e6bd)|
 |[Mail](whgdk1880@gmail.com)|[Mail](whgdk1880@gmail.com)|[Mail](sksdjssl3148@gmail.com)|[Mail](uj02030@naver.com )|[Mail](kjhwang97@gmail.com)|[Mail](hwyewon@gmail.com)|
 </div>
 
 <br>
 
 ### 💯**Our Team's Goal**
-> 팀 단위의 프로젝트인만큼 최대한 다양한 시도를 분업하여 서로의 내용이 겹치지 않도록 진행하였습니다. 이때 업무를 정확한 기준으로 구분하기보다 모두가 자유롭게 EDA부터 전처리, 모델 실험, 모델 튜닝까지 end-to-end로 경험하는 것을 목표로 협업하였습니다. ‘하나에 꽂히면 끝까지 판다’는 공통점을 가진 저희 팀원들의 강한 책임감과 아이디어를 향한 끈질긴(?) 애정 덕분에 성공적으로 프로젝트를 마무리할 수 있었습니다.
+> 팀 단위 프로젝트인만큼 최대한 다양한 시도를 분업하여 서로의 작업이 겹치지 않도록 진행하였습니다. 최대한 다양한 전처리 방법론과 모델링, 협업툴의 사용을 목표로 프로젝트를 진행하였습니다.
 
 <br>
 
@@ -81,7 +81,7 @@
 |**EDA**|`데이터 분포 분석`, `Baseline 모델 예측라벨과 실제 라벨 차이 분석`|
 |**Preprocessing**|`중복행 제거`, `특수문자 제거`, `hanja(한자-한글 변환)`, `hanspell(맞춤법검사)`,`pykospacing(띄어쓰기 재정렬)`|
 |**Augmentation**|`EDA(Easy-Data-Augmentation)`, `entity swap`,|
-|**Experiment Model**|`klue/bert-base`, `klue/roberta-large`, `monologg/KoELECTRA-base`, `KETI-AIR/ke-t5-base`, `xlm-roberta-large`, `snunlp/KR-SBERT-V40K-klueNLI-augSTS`, `kykim/electra-kor-base`, `snunlp/KR-ELECTRA-discriminator`, `BM-K/KoSimCSE-roberta`, `rurupang/roberta-base-finetuned-sts`|
+|**Experiment Model**|`klue/bert-base`, `ainize/klue-bert-base-re`,`kakaobank/kf-deberta-base`,`bespin-global/klue-sentence-roberta-base-kornlu`,`klue/roberta-large`, `monologg/koelectra-base-v3-discriminator`,`xlm-roberta-large`,`team-lucid/deberta-v3-xlarge-korean`|
 |**Hyper paramter tunning & Mornitoring**| `Wandb Sweep`|
 |**Ensemble**|`weight voting`, `soft voting`, `hard voting`|
 
@@ -97,7 +97,7 @@
 |**AugmentationV3**|`AugmentationV2` + `NNP, SL Masking`|
 
 * 데이터 증강 과정에서 라벨 분포를 균형있게 맞추고자 **라벨별 증강 비율을 조정**하였습니다.
-![Alt text](./markdownimg/image-9.png)
+
 
 <br>
 
