@@ -28,7 +28,7 @@
 |구다연[<img src="img/github-mark.png" width="20" style="vertical-align:middle;">](https://github.com/9ooDa)|김동현[<img src="img/github-mark.png" width="20" style="vertical-align:middle;">](https://github.com/valofosho)|김유민[<img src="img/github-mark.png" width="20" style="vertical-align:middle;">](https://github.com/miniminii)|김희범[<img src="img/github-mark.png" width="20" style="vertical-align:middle;">](https://github.com/C7C4FF)|이민아[<img src="img/github-mark.png" width="20" style="vertical-align:middle;">](https://github.com/minari1505)|이지인[<img src="img/github-mark.png" width="20" style="vertical-align:middle;">](https://github.com/Boribori12)|
 |:--:|:--:|:--:|:--:|:--:|:--:|
 |![다연](https://github.com/boostcampaitech6/level2-klue-nlp-02/assets/58420112/8e952c33-468e-46a8-979d-512057ad364e)|![동현](https://github.com/boostcampaitech6/level2-klue-nlp-02/assets/58420112/51f6e386-e1d8-4ae6-ae7d-2d6480dd3b80)|![유민](https://github.com/boostcampaitech6/level2-klue-nlp-02/assets/58420112/5d9ff58b-f0a7-4945-9984-5ab311795395)|![희범](https://github.com/boostcampaitech6/level2-klue-nlp-02/assets/58420112/75d58975-28a6-4d2d-8c53-f9222d98fa87)|![민아](https://github.com/boostcampaitech6/level2-klue-nlp-02/assets/58420112/0d83ae8a-218b-466c-b957-7ac93c32e3b0)|![지인](https://github.com/boostcampaitech6/level2-klue-nlp-02/assets/58420112/e24d1293-bd19-4d89-ace3-ce706734f10a)|
-|[Mail](whgdk1880@gmail.com)|[Mail](whgdk1880@gmail.com)|[Mail](sksdjssl3148@gmail.com)|[Mail](uj02030@naver.com )|[Mail](kjhwang97@gmail.com)|[Mail](hwyewon@gmail.com)|
+|[Mail](dayeonkuhk@gmail.com)|[Mail](whgdk1880@gmail.com)|[Mail](sksdjssl3148@gmail.com)|[Mail](c7c4ff.beom@gmail.com)|[Mail](minari1505@naver.com)|[Mail](sos000523@naver.com)|
 </div>
 
 <br>
@@ -56,8 +56,8 @@
 ### 🖥️ Project Introduction
 |**개요**|**Description**|
 |:--:|--|
-|**프로젝트 주제** | **`RE(Relation Extraction)`** : 두 문장의 유사도 정도를 수치로 추론하는 Task |
-|**프로젝트 목표**| 다양한 전처리 기법과 모델링을 활용하여 개체 간 관계를 30개의 클래스로 예측하는 모델 생성
+|**프로젝트 주제** | **`RE(Relation Extraction)`** : 문장 내 개체 간 관계를 예측하는 30개의 라벨로 중 하나로 분류하는 문제|
+|**프로젝트 목표**| 다양한 전처리 기법과 모델링을 활용하여 문장, 단어에 대한 정보를 통해 ,문장 속에서 단어 사이의 관계를 추론하는 모델을 생성
 |**프로젝트 평가지표**|No_relation 클래스를 제외한 **Micro F1 Score**, 모든 클래스에 대한 **AUPRC**(Area Under the Precision-Recall Curve)|
 |**개발 환경**|**`GPU` : Tesla V100 Server 6대**, **`IDE` : Vscode, Jupyter Notebook**|
 |**협업 환경**|**`Notion`**(진행 상황 공유), **`Github`**(코드 및 데이터 공유), **`Slack`**(실시간 소통) |
@@ -78,42 +78,27 @@
 
 |**Process**|**What we did**|
 |:--:|--|
-|**EDA**|`데이터 분포 분석`, `Baseline 모델 예측라벨과 실제 라벨 차이 분석`|
-|**Preprocessing**|`중복행 제거`, `특수문자 제거`, `hanja(한자-한글 변환)`, `hanspell(맞춤법검사)`,`pykospacing(띄어쓰기 재정렬)`|
+|**EDA**|`데이터 분포 분석`, `데이터 길이 분석`, `Baseline 모델 예측라벨과 실제 라벨 차이 분석`|
+|**Preprocessing**|`중복 행 제거`, `특수문자 제거`, `hanja(한자-한글 변환)`, `hanspell(맞춤법검사)`,`pykospacing(띄어쓰기 재정렬)`|
 |**Augmentation**|`EDA(Easy-Data-Augmentation)`, `entity swap`,|
 |**Experiment Model**|`klue/bert-base`, `ainize/klue-bert-base-re`,`kakaobank/kf-deberta-base`,`bespin-global/klue-sentence-roberta-base-kornlu`,`klue/roberta-large`, `monologg/koelectra-base-v3-discriminator`,`xlm-roberta-large`,`team-lucid/deberta-v3-xlarge-korean`|
 |**Hyper paramter tunning & Mornitoring**| `Wandb Sweep`|
+|**Visualization**| `Plotly`|
 |**Ensemble**|`weight voting`, `soft voting`, `hard voting`|
 
-
-<br>
-
-### **📊DataSet**
-
-|**Version**|**Description**|
-|:--:|--|
-|**AugmentationV1**|원본 데이터에서 label>=4인 데이터 단순 증강.|
-|**AugmentationV2**|`원본 데이터` + `맞춤법 검사 데이터` + `SR` + `Swap Sentence` + `Copied Sentence`|
-|**AugmentationV3**|`AugmentationV2` + `NNP, SL Masking`|
-
-* 데이터 증강 과정에서 라벨 분포를 균형있게 맞추고자 **라벨별 증강 비율을 조정**하였습니다.
-
-
-<br>
 
 
 
 ### 🤖**Ensemble Model**
 
-* 최종적으로 5개의 모델을 앙상블에 사용하였습니다.
+* 최종적으로 4개의 모델을 앙상블에 사용하였습니다.
 
-|**Model**|**Learing Rate**|**Batch Size**|**loss**|**epoch**|**Data Cleaning**|**Data Augmentation**|**Public Pearson**|**Scheduler**|**Ensemble Weight**|
-|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
-|**klue/RoBERTa-large**|1e-5|16|L1|5|Spell Check|AugmentationV2|0.9125||0.9125|
-|**klue/RoBERTa-large**|1e-5|16|MSE|2|Spell Check|AugmentationV3|0.9166||0.9166|
-|**kykim/electra-kor-base**|2e-5|32|L1|23|Spell Check|AugmentationV2|0.9216|CosineAnnealingWarmRestarts|0.9216|
-|**snunlp/KR-ELECTRA-discriminator**|1e-5|32|L1|15||AugmentationV1|0.9179||0.9179|
-|**snunlp/KR-ELECTRA-discriminator**|2e-5|32|L1|15|Spell Check|AugmentationV2|0.9217|CosineAnnealingWarmRestarts|0.9217|
+|**Model**|**Learing Rate**|**Batch Size**|**loss**|**epoch**|**Dataset**|**Entity Marker**|**Public Micro F1 Score**|**Public AUPRC**|
+|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|:--:|
+|**klue/RoBERTa-large**|3e-5|32|FocalLoss|3|dist_1|tem_punt_question|73.8103|78.0330|
+|**klue/RoBERTa-large**|3e-5|32|FocalLoss|3|Filter_duplicates_1|tem_punt_question|72.8334|78.5174|
+|**xlm-roberta-large**|5e-5|48|FocalLosss|3|dist_1|tem_punt_question|68.4932|75.6809|
+|**kakaobank/kf-deberta-base**|5e-5|32|FocalLoss|3|dist_1|tem_punt_question|72.9120|76.9670|
 
 <br>
 
@@ -121,7 +106,7 @@
 
 ### **📁디렉토리 구조 설명**
 * 학습 데이터 경로 : `./data`
-* 모델 및 Sweep Config 경로 : `./code/config`
+* 모델 및 Sweep Config 경로 : `./config`
 * 학습된 모델 생성 경로 : `./best_model`
 * 추론 결과 생성 경로 : `./prediction`
 * 앙상블 코드 경로: `./ensemble`
@@ -144,7 +129,8 @@
 ├─ data
 ├─ dataset
 │  ├─ dict_label_to_num.pkl
-│  └─ dict_num_to_label.pkl
+│  ├─ dict_num_to_label.pkl
+│  └─ wordnet.pickle
 ├─ prediction
 ├─ preprocessing
 │  ├─ eda.py
@@ -186,16 +172,17 @@
 
 ### **🤖Train Model**
 ```
-# ./code/config 에서 훈련 모델의 config 설정
-> python ./code/train.py
+# ./config 에서 훈련 모델의 config 설정
+# config.yaml은 자동으로 적용
+> python train.py
 ```
 
 
 ### **🤖Infer or Ensemble Model**
 ```
 # Infer
-> python ./code/inference.py --mode inference
+> python inference.py
 
 # Ensemble
-> python ./code/inference.py --mode ensemble
+> python ./ensemble/ensemble.py
 ```
