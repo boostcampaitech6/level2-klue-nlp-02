@@ -149,3 +149,6 @@ wandb/
 
 #csv_files
 .ensemble/ensemble_data/
+
+#연습용
+ex.ipynb
