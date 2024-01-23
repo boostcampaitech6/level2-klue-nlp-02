@@ -148,6 +148,11 @@ def load_test_dataset(dataset_dir, tokenizer, method: str = "tem_punt_question")
 
 
 def make_sentence_mark(method, sentence, subject, object):
+    """
+    entity_marker method를 입력으로 받아
+    해당 sentence의 subject entity와 object entity 단어에
+    entity_marker를 붙여줍니다.
+    """
     if method == "em2":  # entity_marker_2
         sentence = sentence.replace(subject["word"], f"[{subject['type']}]{subject['word']}[/{subject['type']}")
         sentence = sentence.replace(object["word"], f"[{object['type']}]{object['word']}[/{object['type']}]")
