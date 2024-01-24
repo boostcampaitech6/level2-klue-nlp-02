@@ -56,9 +56,9 @@
 ### 🖥️ Project Introduction
 |**개요**|**Description**|
 |:--:|--|
-|**프로젝트 주제** | **`RE(Relation Extraction)`** : 문장 내 개체 간 관계를 예측하는 30개의 라벨로 중 하나로 분류하는 문제|
+|**프로젝트 주제** | **`RE(Relation Extraction)`** : 문장 내 단어(Entity)에 대한 속성과 관계를 예측하는 문제|
 |**프로젝트 목표**| 다양한 전처리 기법과 모델링을 활용하여 문장, 단어에 대한 정보를 통해 ,문장 속에서 단어 사이의 관계를 추론하는 모델을 생성
-|**프로젝트 평가지표**|No_relation 클래스를 제외한 **Micro F1 Score**, 모든 클래스에 대한 **AUPRC**(Area Under the Precision-Recall Curve)|
+|**프로젝트 평가지표**|no_relation 클래스를 제외한 **Micro F1 Score**, 모든 클래스에 대한 **AUPRC**(Area Under the Precision-Recall Curve)|
 |**개발 환경**|**`GPU` : Tesla V100 Server 6대**, **`IDE` : Vscode, Jupyter Notebook**|
 |**협업 환경**|**`Notion`**(진행 상황 공유), **`Github`**(코드 및 데이터 공유), **`Slack`**(실시간 소통) |
 
@@ -66,7 +66,7 @@
 
 ### 📅**Project TimeLine**
 
-* 프로젝트는 2024-01-03 ~ 2024-01-18 약 15일간 진행되었습니다.
+* 프로젝트는 2024-01-03 ~ 2024-01-18 약 16일간 진행되었습니다.
 
 ![Alt text](./img/milestone.png)
 
@@ -83,7 +83,7 @@
 |**Preprocessing**|`중복 행 제거`, `특수문자 제거`, `hanja(한자-한글 변환)`, `hanspell(맞춤법검사)`,`pykospacing(띄어쓰기 재정렬)`|
 |**Augmentation**|`EDA(Easy-Data-Augmentation)`, `entity swap`|
 |**Experiment Model**|`klue/bert-base`, `ainize/klue-bert-base-re`,`kakaobank/kf-deberta-base`,`bespin-global/klue-sentence-roberta-base-kornlu`,`klue/roberta-large`, `monologg/koelectra-base-v3-discriminator`,`xlm-roberta-large`,`team-lucid/deberta-v3-xlarge-korean`|
-|**Hyper-parameter tuning & Mornitoring**| `Wandb Sweep`|
+|**Hyper-parameter tuning & Monitoring**| `Wandb Sweep`|
 |**Visualization**| `Plotly`|
 |**Ensemble**|`weighted voting`, `soft voting`, `hard voting`|
 
@@ -110,7 +110,6 @@
 * 모델 및 Sweep Config 경로 : `./config`
 * 학습된 모델 생성 경로 : `./best_model`
 * 추론 결과 생성 경로 : `./prediction`
-* 앙상블 코드 경로: `./ensemble`
 
 
 ### **📁📁코드 구조 설명**
@@ -185,14 +184,14 @@
 > python train.py
 ```
 
-### **🤖Predict Label**
+### **🤖Inference Label**
 ```
-# 학습된 모델로 라벨 예측
+# 학습된 모델로 추론
 > python inference.py
 ```
 
 ### **🤖Ensemble Outputs**
 ```
-# Ensemble
+# 앙상블 진행
 > python ./ensemble/ensemble.py
 ```
