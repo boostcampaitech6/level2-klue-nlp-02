@@ -18,7 +18,7 @@
 
 ## 👨‍💻Team & Members
 
-* **Team명** : 더닝크루거 [NLP 2조]
+* **Team명** : **더닝크루거 [NLP 2조]**
 
 
 ### 🧚**Members**
@@ -66,7 +66,7 @@
 
 ### 📅**Project TimeLine**
 
-* 프로젝트는 2024-1-3 ~ 2024 1-18 약 15일간 진행되었습니다.
+* 프로젝트는 2024-01-03 ~ 2024-01-18 약 15일간 진행되었습니다.
 
 ![Alt text](./img/milestone.png)
 
@@ -75,16 +75,17 @@
 ### 🕵️**What we did**
 
 * 프로젝트를 진행하며 단계별로 실험해 보고 적용해 본 내용들은 아래와 같습니다.
+* 보다 자세한 사항은 [📋Wrap-up Report](https://supreme-kilogram-785.notion.site/Wrap-up-Report-0b47d31a89474f25b8ca6a749022c2e2?pvs=4)를 참고해주시기 바랍니다.
 
 |**Process**|**What we did**|
 |:--:|--|
 |**EDA**|`데이터 분포 분석`, `데이터 길이 분석`, `Baseline 모델 예측라벨과 실제 라벨 차이 분석`|
 |**Preprocessing**|`중복 행 제거`, `특수문자 제거`, `hanja(한자-한글 변환)`, `hanspell(맞춤법검사)`,`pykospacing(띄어쓰기 재정렬)`|
-|**Augmentation**|`EDA(Easy-Data-Augmentation)`, `entity swap`,|
+|**Augmentation**|`EDA(Easy-Data-Augmentation)`, `entity swap`|
 |**Experiment Model**|`klue/bert-base`, `ainize/klue-bert-base-re`,`kakaobank/kf-deberta-base`,`bespin-global/klue-sentence-roberta-base-kornlu`,`klue/roberta-large`, `monologg/koelectra-base-v3-discriminator`,`xlm-roberta-large`,`team-lucid/deberta-v3-xlarge-korean`|
-|**Hyper paramter tunning & Mornitoring**| `Wandb Sweep`|
+|**Hyper-parameter tuning & Mornitoring**| `Wandb Sweep`|
 |**Visualization**| `Plotly`|
-|**Ensemble**|`weight voting`, `soft voting`, `hard voting`|
+|**Ensemble**|`weighted voting`, `soft voting`, `hard voting`|
 
 
 
@@ -117,8 +118,9 @@
 2. **Config 설정 코드 경로** : `./config/`
 3. **Model Train 코드 위치** : `./train.py`
     - 모델 .pt파일 생성 경로 : `./best_model/`
-4. **Infer & Ensemble 코드 위치** : `./inference.py`
+4. **Infer 코드 위치** : `./inference.py`
     - 추론 결과 .csv파일 생성 경로 : `./prediction/`
+5. **Ensemble 코드 위치** : `./ensemble/ensemble.py`
 
 ```
 📦 
@@ -162,7 +164,13 @@
 
 <br>
 
-## **💻How to Start**
+## **💻Getting Started**
+
+### 🛠️**Requirements**
+```
+# 필요 라이브러리 설치
+> pip install -r requirements.txt
+```
 
 ### **📊Make Dataset**
 ```
@@ -177,12 +185,14 @@
 > python train.py
 ```
 
-
-### **🤖Infer or Ensemble Model**
+### **🤖Predict Label**
 ```
-# Infer
+# 학습된 모델로 라벨 예측
 > python inference.py
+```
 
+### **🤖Ensemble Outputs**
+```
 # Ensemble
 > python ./ensemble/ensemble.py
 ```
