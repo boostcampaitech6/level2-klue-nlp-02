@@ -1,0 +1,10 @@
+hanja==0.13.3
+numpy==1.23.1
+pandas==2.0.1
+plotly==5.18.0
+pykospacing @ git+https://github.com/haven-jeon/PyKoSpacing.git@04aeebcbe26b109486a642e57dc58665c4818cf3
+PyYAML==5.1.2
+scikit_learn==1.2.2
+torch==1.11.0
+tqdm==4.66.1
+transformers==4.26.0

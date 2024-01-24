@@ -134,3 +134,21 @@ dmypy.json
 .DS_Store
 test.ipynb
 
+# data
+.dataset/
+*.csv
+
+#result
+results/
+
+#output
+best_model/
+
+#wandb logs
+wandb/
+
+#csv_files
+.ensemble/ensemble_data/
+
+#연습용
+ex.ipynb
