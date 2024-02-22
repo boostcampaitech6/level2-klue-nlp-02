@@ -1,0 +1,55 @@
+program: sweep.py
+name: for_metric
+entity: klue2-dk
+project: dayeon
+method: grid
+metric:
+  goal: maximize
+  name: eval/micro f1 score
+
+
+data:
+    output_path: ./best_model/
+    train_path: ./data/train_dist_1.csv
+    dev_path: ./data/dev_dist_1.csv
+    predict_path: ./data/test.csv
+    submission_path: ./prediction/
+
+model:
+    save_total_limit: 1
+    save_steps: 1000
+
+parameters:
+  model_name:
+    values:
+      ['ainize/klue-bert-base-re']
+  seed:
+    values: [42]
+  learning_rate:
+    values: [3e-5, 5e-5]
+  batch_size:
+    values: [48]
+  max_epoch:
+    values: [3]
+  warmup_steps:
+    value:
+      500
+  weight_decay: 
+    values: [0.1, 0.01]
+  evaluation_strategy:
+    value: 'steps'
+  eval_steps:
+    value: 1000
+  loss_function:
+    value: 'FocalLoss'
+  entity_method: 
+    values: ['tem_punt']
+  gamma:
+    values: [0]
+  alpha:
+    value: 0
+
+log:
+    logging_dir: ./logs
+    logging_steps: 100
+
